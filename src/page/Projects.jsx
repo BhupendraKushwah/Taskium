@@ -3,6 +3,7 @@ import CustomSearchField from "../component/commonComponent/customFields/CustomS
 import ProjectDetails from "../component/projects/ProjectData";
 import Button from '../component/commonComponent/customFields/Button';
 import Input from "../component/commonComponent/customFields/Input";
+import Datepicker from "../component/commonComponent/customFields/Datepicker";
 
 const Projects = () => {
     // Dummy data to search from
@@ -94,12 +95,12 @@ const SidebarForm = ({ onClose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Form Submitted:", formData);
-        onClose(); // Close the sidebar after submitting (if implemented)
+        onClose();
     };
 
     return (
         <div className="w-full h-full fixed top-22 left-0 bg-[#0000004d]">
-            <div className="w-80 fixed right-0 h-full bg-white shadow-lg p-5">
+            <div className="w-1/4 sm:w-1/2 md:w-1/2 lg:w-1/4 fixed right-0 h-full bg-white shadow-lg p-5">
                 <div className="border-b border-gray-200">
                     <div className="flex justify-end mr-2">
                         <button onClick={onClose} className="cursor-pointer">
@@ -116,21 +117,16 @@ const SidebarForm = ({ onClose }) => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-2 border rounded placeholder-gray-200"
                             placeholder="Enter your name"
                         />
                     </div>
 
                     <div className="mb-3">
-                        <label className="text-gray-400 text-sm">Email</label>
-                        <Input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                            placeholder="Enter your email"
-                        />
+                        <label className="text-gray-400 text-sm">Date</label>
+                        <Datepicker 
+                         className="w-full p-2 border rounded"
+                         />
                     </div>
 
                     <div className="mb-3">
@@ -148,16 +144,16 @@ const SidebarForm = ({ onClose }) => {
                         <Button
                             type="button"
                             onClick={onClose}
-                            bgColor="bg-gray-300"
+                            bgColor="bg-white-300"
                             textColor="text-primary"
-                            className="px-3 py-1 border rounded hover:bg-gray-300"
+                            className="px-3 py-1 border border-2 rounded hover:shadow-md hover:border-white transition duration-150"   
                         >
                             Cancel
                         </Button>
 
                         <Button
                             type="submit"
-                            className="px-3 py-1 text-white rounded"
+                            className="px-5 py-1 text-white rounded"
                         >
                             Add
                         </Button>
