@@ -1,0 +1,8 @@
+@import 'primereact/resources/themes/lara-light-green/theme.css';
+.p-datepicker-calendar {
+    width: 100% !important; /* Ensure the table spans the container width */
+    table-layout: fixed;    /* Force equal column widths */
+}
+.p-calendar{
+    width: 100%;
+}

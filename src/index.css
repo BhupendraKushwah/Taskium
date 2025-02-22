@@ -1,0 +1,26 @@
+@import './App.css';
+@import "tailwindcss";
+
+@theme {
+  --color-navbar: #262D38 !important;
+  --color-primary: #009966 !important;
+  --color-icon-base: #909294 !important;
+  --color-secondary: hsl(0, 5.70%, 89.60%) !important;
+  --color-primary-light: hsl(160, 75%, 50%) !important;
+  --color-active-link: #FF6B6B !important;
+  --color-button-bg: #009966 !important;
+  --color-button-hoverbg: #FF6B6B !important;
+  --color-text-highlight: hsl(160, 100%, 30%) !important;
+  --color-text-sub: hsl(223, 7%, 18%) !important;
+  --color-base-black: hsl(216, 15%, 9%) !important;
+  --color-base-white: hsl(0, 0%, 100%) !important;
+  --height-main-body: calc(100vh - 64px) !important;
+
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Prompt", serif;
+}

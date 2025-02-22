@@ -1,0 +1,275 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+:root {
+  /* Base Colors */
+  --base-black: hsl(216, 15%, 9%);
+  --base-black-lighter: hsl(223, 11%, 13%);
+  --base-black-light: hsl(223, 7%, 18%);
+  --base-white: hsl(0, 0%, 100%);
+  --base-white-darker: hsl(223, 5%, 95%);
+  --base-white-dark: hsl(223, 5%, 92%);
+
+  /* Primary Green Colors */
+  --primary: hsl(160, 100%, 40%);
+  --primary-light: hsl(160, 75%, 50%);
+  --primary-dark: hsl(160, 100%, 35%);
+  --primary-20: hsl(160, 80%, 80%);
+  --primary-15: hsl(160, 80%, 90%);
+  --primary-10: hsl(160, 80%, 95%);
+  --primary-05: hsl(160, 100%, 98%);
+
+  /* Accent and Action Colors */
+  --hover-color: var(--primary-light);
+  /* Light Green for hover effects */
+  --active-link-color: #FF6B6B;
+  /* Coral Red for active links */
+  --button-bg: var(--primary);
+  /* Green button background */
+  --button-hover-bg: var(--active-link-color);
+  /* Coral Red for button hover */
+  --text-highlight: var(--primary);
+  /* Highlighted text in green */
+  --active-green: hsl(150, 85%, 40%);
+  /* Another green shade for active elements */
+
+  /* Neutral Colors */
+  --text-sub: var(--base-black-light);
+  /* Dark grayish text */
+  --text-placeholder: hsl(223, 5%, 43%);
+  /* Placeholder text color */
+  --white-mid-darker: hsl(223, 5%, 76%);
+  --white-mid: hsl(223, 5%, 84%);
+  --white-mid-lighter: hsl(223, 5%, 88%);
+
+  /* UI Backgrounds */
+  --navbar-bg: #262D38;
+  /* Dark grayish blue navbar background */
+  --sidebar-bg: #212529;
+  /* Dark background for sidebar */
+  --sub-menus-color: #373B3E;
+  /* Color for submenus */
+  --overlay-modal: rgba(0, 0, 0, .5);
+  /* Dark overlay for modals */
+  --white-overlay: hsl(0deg 0% 100% / 95%);
+  /* White overlay for light modals */
+
+  /* Icon Colors */
+  --icon-base: #909294;
+  /* Base color for icons */
+}
+
+
+.ts-body {
+  padding: 1.5rem;
+  background-color: var(--base-white-darker);
+  max-width: calc(80vw - 64px);
+  min-width: 100%;
+  position: relative;
+  min-height: calc(100vh - 58px);
+}
+
+h4 {
+  margin: 0;
+  padding: 0;
+  color: var(--base-black);
+  font-weight: 400;
+}
+
+/* Navbar styles */
+.navbar {
+  background-color: #262D38;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  align-items: center;
+}
+
+.fs24 {
+  font-size: 24px;
+}
+
+.fs36 {
+  font-size: 42px;
+  color: var(--primary);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.navbar .nav-link {
+  color: #fff;
+  /* Green text */
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #009966;
+}
+
+.navbar .nav-link:active {
+  color: #FF6B6B;
+  /* Red or coral color for active link */
+}
+
+/* Button styling */
+.navbar .cta-btn {
+  background-color: #009966;
+  /* Green button */
+  color: #FFFFFF;
+  /* White text */
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar .cta-btn:hover {
+  background-color: #FF6B6B;
+  /* Coral color when hovered */
+}
+
+/* Secondary text for less prominent links */
+.navbar .nav-link.secondary {
+  color: #F2F2F2;
+  /* Light gray for secondary text */
+}
+
+.navbar .nav-link.secondary:hover {
+  background-color: transparent;
+  color: #FF6B6B;
+  /* Active color for secondary text */
+}
+
+.side-nav-container {
+  position: fixed;
+  top: 64px;
+  /* Adjust based on your Navbar's height */
+  left: 0;
+  z-index: 9999;
+  height: 100vh;
+  width: 16rem;
+  /* Sidebar width when open */
+  max-width: 16rem;
+  /* Prevent it from exceeding this size */
+  overflow: hidden;
+  transition: width 300ms ease-in-out;
+}
+
+.side-nav-container.closed {
+  width: 4rem;
+  /* Sidebar width when closed */
+}
+
+.side-nav-container.open {
+  width: 16rem;
+  /* Sidebar width when open */
+}
+
+.side-nav-container .side-nav {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  border-bottom: 1px solid var(--white-mid);
+  margin-bottom: .5rem;
+}
+
+.profile {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  overflow: hidden;
+}
+
+.ts-input-search {
+  height: 33px;
+  padding: 0 2rem;
+  border: none;
+  background: var(--base-white);
+  border-radius: 5px;
+  width: 300px;
+  outline: 1px solid var(--white-mid);
+}
+
+.ts-input-search:focus {
+  outline-color: var(--primary);
+  color: var(--text-placeholder);
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(50%, -50%);
+}
+
+.x-btn {
+  position: absolute;
+  background: var(--base-white);
+  width: 33px;
+  height: 33px;
+  border-left: 1px solid var(--primary);
+  border-radius: 0 4px 4px 0;
+  right: 0;
+  top: 0;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hover-container:hover polygon,
+.hover-container:hover polyline {
+  transform: translateX(50px);
+  transition: transform 0.5s ease-in-out;
+}
+
+polygon,
+polyline {
+  transform-origin: center;
+}
+
+/* custom datepicker */
+:where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border: #009966 solid 1px;
+  border-radius:50% ;
+  background-color: #c7f0e2a4;
+  padding: 10px;
+}
+
+
+/* Custom focus and hover styles */
+.ant-picker:hover,
+.ant-picker-focused {
+  border-color: #009966 !important;
+  box-shadow: 0 0 3px #009966;
+}
+
+/* Custom icon color for suffix */
+.ant-picker:hover 
+.ant-picker-suffix{
+  color: #009966 !important;
+}
+
+/* custom multiselect */
+.css-t3ipsp-control{
+  border-color: #009966 !important;
+}
+
+.css-v7duua:hover{
+  background: #01ffaa46 !important;
+  cursor: pointer;
+}
