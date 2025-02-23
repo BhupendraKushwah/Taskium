@@ -11,7 +11,19 @@ const Input = ({
 }) => {
     return (
         <div>
-            <input type={type} placeholder={placeholder} className={`px-2 py-1 border-gray-300 border rounded-md focus:border-0 focus:outline-primary focus:shadow-primary ${className}`} {...props} onChange={onChange} />
+            <input
+                type={type}
+                placeholder={placeholder}
+                className={`p-2 border-gray-300 border rounded-md 
+                    focus:outline-none focus:border-primary focus:shadow-[0_0_3px_#009966] 
+                    hover:outline-none hover:border-primary hover:shadow-[0_0_3px_#009966] 
+                    text-gray-500 font-normal
+                    transition duration-300 
+                    ${className}`}
+                {...props}
+                onChange={onChange}
+            />
+
         </div>
     )
 }

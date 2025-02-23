@@ -84,6 +84,9 @@ h4 {
   align-items: center;
 }
 
+.page{
+  height: calc(100vh - 173px);
+}
 .fs24 {
   font-size: 24px;
 }
@@ -209,6 +212,12 @@ h4 {
   color: var(--text-placeholder);
 }
 
+@media (max-width: 425px) {
+  .ts-input-search{
+    width: 100%;
+  }
+}
+
 .search-icon {
   position: absolute;
   top: 50%;
@@ -269,7 +278,32 @@ polyline {
   border-color: #009966 !important;
 }
 
+.css-757vwy-control{
+  padding: 2px 0;
+}
+
+.css-1dimb5e-singleValue{
+  color: #4e4e4e !important;
+}
+
 .css-v7duua:hover{
   background: #01ffaa46 !important;
   cursor: pointer;
+}
+
+input {
+  color: #4e4e4e !important;
+}
+
+input::placeholder {
+  color: rgba(179, 179, 179, 0.774);
+  /* font-weight: 300; */
+  font-size: 14px;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.no-scroll {
+  overflow: hidden !important; /* Prevent scrolling */
+  height: 100vh;
 }

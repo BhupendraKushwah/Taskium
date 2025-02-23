@@ -16,8 +16,10 @@ const Layout = () => {
             <div className={`side-nav-container ${isSideNavOpen ? 'w-64' : 'w-16'} hover:w-64`}>
                 <SideNav isSideNavOpen={isSideNavOpen} />
             </div>
-            <main className={`flex-1 transition-all pt-14 ${isSideNavOpen ? 'ml-64' : 'ml-16'}`}>
-                <div className="p-6 space-y-6 ts-body">
+             {/* Main Content - Prevent full-page scroll */}
+             <main className={`flex-1 transition-all pt-14 ${isSideNavOpen ? 'ml-64' : 'ml-16'} h-screen overflow-hidden`}>
+                {/* Scroll only inside Outlet */}
+                <div className="p-6 space-y-6 ts-body h-full overflow-auto">
                     <Outlet />
                 </div>
             </main>

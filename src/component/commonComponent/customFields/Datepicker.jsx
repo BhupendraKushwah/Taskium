@@ -1,7 +1,7 @@
 import React from "react";
 import { DatePicker } from "antd";
 
-function CustomDatepicker({ onDateChange, className='' }) {
+function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,...props }) {
   // Handle the date selection event
   const handleDateChange = (date, dateString) => {
     console.log("Selected Date:", dateString);
@@ -13,12 +13,14 @@ function CustomDatepicker({ onDateChange, className='' }) {
   return (
     <div className="flex items-center w-full">
       <DatePicker
+        defaultValue={defaultValue}
         onChange={handleDateChange}
-        className={`border-primary ${className}`}
+        className={`border-primary p-2 ${className}`}
         style={{
           borderRadius: "8px",
-          padding: "5px 10px",
+          padding: "0.5rem",
         }}
+        {...props}
       />
     </div>
   );

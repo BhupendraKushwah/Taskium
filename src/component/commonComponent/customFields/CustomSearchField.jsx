@@ -5,7 +5,7 @@ const CustomSearchField = ({
     onBlur,
     value,
     type,
-    className,
+    className = '',
     disabled,
     ...props
 }) => {

@@ -4,7 +4,7 @@ import { convertDate } from "../../utils/date-format";
 const ProjectDetails = ({ project }) => {
  
     return (
-        <div className="bg-white p-3 rounded shadow w-1/3 relative">
+        <div className="bg-white p-3 rounded shadow relative">
             <div className="flex flex-wrap content-center items-center gap-2">
                 <div className="project-logo bg-secondary p-3 rounded">
                     <svg
