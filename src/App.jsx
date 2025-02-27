@@ -5,12 +5,13 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import Layout from './Layout';
 import Projects from './page/Projects';
 import NotFound from './page/NotFound';
+import ProjectContextProvider from './context/ProjectContextProvider';
 
 
 function App() {
 
   return (
-    <>
+    <ProjectContextProvider>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Layout />}>
@@ -21,7 +22,7 @@ function App() {
         </Routes>
       </BrowserRouter>
 
-    </>
+    </ProjectContextProvider>
   );
 }
 
