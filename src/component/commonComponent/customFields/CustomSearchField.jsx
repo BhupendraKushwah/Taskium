@@ -5,6 +5,7 @@ const CustomSearchField = ({
     onBlur,
     value,
     type,
+    InputWidth = 'w-[300px]',
     className = '',
     disabled,
     ...props
@@ -13,7 +14,7 @@ const CustomSearchField = ({
         <div className={` ${className} flex relative input-search`}>
             <i className="ph ph-magnifying-glass search-icon"></i>
             <input
-                className={`ts-input-search fu-search-marg`}
+                className={`ts-input-search ${InputWidth} fu-search-marg`}
                 type={type}
                 value={value}
                 placeholder={placeholder}

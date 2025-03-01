@@ -156,7 +156,7 @@ h4 {
   left: 0;
   z-index: 9999;
   height: 100vh;
-  width: 16rem;
+  /* width: 16rem; */
   /* Sidebar width when open */
   max-width: 16rem;
   /* Prevent it from exceeding this size */
@@ -203,7 +203,7 @@ h4 {
   border: none;
   background: var(--base-white);
   border-radius: 5px;
-  width: 300px;
+  /* width: 300px; */
   outline: 1px solid var(--white-mid);
 }
 

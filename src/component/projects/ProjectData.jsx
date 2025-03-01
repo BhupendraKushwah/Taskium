@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { convertDate } from "../../utils/date-format";
-import { useProject } from "../../context/ProjectContext";
+import { useProject } from "../../context/ProjectContext/ProjectContext";
 import Button from "../commonComponent/customFields/Button";
 
 const ProjectDetails = ({ project }) => {

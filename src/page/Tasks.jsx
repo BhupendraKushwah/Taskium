@@ -1,123 +1,168 @@
-import { useEffect, useState } from "react";
-import CustomSearchField from "../component/commonComponent/customFields/CustomSearchField";
-import ProjectDetails from "../component/projects/ProjectData";
-import Button from '../component/commonComponent/customFields/Button';
-import Input from "../component/commonComponent/customFields/Input";
-import Datepicker from "../component/commonComponent/customFields/Datepicker";
-import CustomMultiselect from "../component/commonComponent/customFields/CustomMultiSelectField";
-import dayjs from "dayjs";
-import { useProject } from "../context/ProjectContext/ProjectContext";
-
-const Projects = () => {
-    const { projects, addProjects, updateProject, deleteProject } = useProject();
-    const [filteredProjects, setFilteredProjects] = useState([]);
-    const [search, setSearch] = useState("");
-    const [isSideFormOpen, setIsSideFormOpen] = useState(false);
-    const projectData = Array(7).fill(null).map((_, index) => ({
-        projectName: "Portfolio",
-        description: "A project to redesign the company's website with a modern look.",
-        status: "In Progress",
-        teamMembers: [
-            { name: "John Doe", role: "Designer" },
-            { name: "Jane Smith", role: "Developer" }
-        ],
-        tasks: [
-            { name: "Create wireframes", completed: true },
-            { name: "Develop homepage", completed: false },
-            { name: "Test responsiveness", completed: false }
-        ],
-        startDate: "2025-01-01",
-        dueDate: "2025-02-01"
-    }));
+import React, { useEffect, useState } from 'react'
+import Button from '../component/commonComponent/customFields/Button'
+import Table from '../component/DraggableTable/Table';
+import { useTask } from '../context/TaskContext/TaskContext';
 
 
-    const handleAsyncChange = async (value) => {
-        setSearch(value);
-        setFilteredProjects(
-            projects.filter(item =>
-                item.name.toLowerCase().includes(value.toLowerCase())
-            )
-        );
-    };
+const Tasks = () => {
+    const [isTaskOpen, setIsTaskOpen] = useState(false);
+    const { addTask, deleteTask, updateTask, getTask } = useTask();
+    const initialData = [
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02f9",
+            "subject": "In access right module> school admin side",
+            "assigneeData": "Sagar Nalwa",
+            "createdBy": "Pooja Bisht",
+            "createdOn": "2025-02-28T12:29:34.664Z",
+            "dueDate": "2025-02-28T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "High",
+            "startDate": "2025-02-28T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02f0",
+            "subject": "In access right module> school admin side",
+            "assigneeData": "Sagar Nalwa",
+            "createdBy": "Pooja Bisht",
+            "createdOn": "2025-02-28T12:29:34.664Z",
+            "dueDate": "2025-02-28T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "High",
+            "startDate": "2025-02-28T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02f8",
+            "subject": "In access right module> school admin side",
+            "assigneeData": "Sagar Nalwa",
+            "createdBy": "Pooja Bisht",
+            "createdOn": "2025-02-28T12:29:34.664Z",
+            "dueDate": "2025-02-28T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "High",
+            "startDate": "2025-02-28T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02f2",
+            "subject": "In access right module> school admin side",
+            "assigneeData": "Sagar Nalwa",
+            "createdBy": "Pooja Bisht",
+            "createdOn": "2025-02-28T12:29:34.664Z",
+            "dueDate": "2025-02-28T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "High",
+            "startDate": "2025-02-28T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02fa",
+            "subject": "Login issue on admin panel",
+            "assigneeData": "Ravi Kumar",
+            "createdBy": "Neha Sharma",
+            "createdOn": "2025-02-27T10:15:20.123Z",
+            "dueDate": "2025-03-01T00:00:00.000Z",
+            "isCompleted": true,
+            "priority": "Medium",
+            "startDate": "2025-02-27T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02fb",
+            "subject": "Payment gateway integration",
+            "assigneeData": "Priya Mehta",
+            "createdBy": "Amit Singh",
+            "createdOn": "2025-02-26T14:45:10.234Z",
+            "dueDate": "2025-03-03T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "High",
+            "startDate": "2025-02-26T00:00:00.000Z",
+            "status": "In Progress",
+            "type": "Feature"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02fc",
+            "subject": "User profile update error",
+            "assigneeData": "Ankit Rawat",
+            "createdBy": "Ritu Sharma",
+            "createdOn": "2025-02-25T09:10:30.567Z",
+            "dueDate": "2025-03-02T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "Low",
+            "startDate": "2025-02-25T00:00:00.000Z",
+            "status": "Open",
+            "type": "Bug"
+        },
+        {
+            "_id": "67c1ac2e06a9aedcf9fd02fd",
+            "subject": "Notification system enhancement",
+            "assigneeData": "Manoj Kumar",
+            "createdBy": "Pooja Bisht",
+            "createdOn": "2025-02-24T11:20:45.789Z",
+            "dueDate": "2025-03-05T00:00:00.000Z",
+            "isCompleted": false,
+            "priority": "Medium",
+            "startDate": "2025-02-24T00:00:00.000Z",
+            "status": "In Progress",
+            "type": "Feature"
+        }
+    ]
 
-    const handleSubmit = async (value) => {
-        addProjects(value);
-        setIsSideFormOpen(false);
-    };
+    let customColumns = [
+        { "subject": "Subject", "field": "text" },
+        { "assigneeData": "Assignee", "field": "select", "option": Array.from(new Set(initialData.flatMap(item => 
+            JSON.stringify({ label: item.assigneeData, value: item.assigneeData })
+          ))).map(item => JSON.parse(item))
+ },
+        { "createdBy": "Created By", "field": "select", "option": Array.from(new Set(initialData.flatMap(item => 
+      JSON.stringify({ label: item.createdBy, value: item.createdBy })
+    ))).map(item => JSON.parse(item))
+},
+        { "createdOn": "Created On", "field": "date" },
+        { "dueDate": "Due Date", "field": "date" },
+        { "priority": "Priority", "field": "select", "option": ['High', 'Medium', 'Low'].map(item => ({ label: item, value: item })) },
+        { "startDate": "Start Date", "field": "date" },
+        { "status": "Status", "field": "select", "option": ['New', 'InProgress', 'Completed'].map(item => ({ label: item, value: item })) },
+        { "type": "Type", "field": "select", "option": ['Bug', 'Feature'].map(item => ({ label: item, value: item })) }
+    ]
+
+
+    const handleSubmit = (data) => {
+        console.log(data);
+    }
 
     useEffect(() => {
-        projectData.forEach((item) => addProjects(item));
-    }, []);
-    useEffect(() => {
-        setFilteredProjects(projects)
-    }, [projects])
+        initialData.forEach((item) => addTask(item));
+    }, [])
 
     return (
         <div className="overflow-hidden">
             <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white p-2 rounded">
-                <h3 className="text-lg">Projects</h3>
+                <h3 className="text-lg">Tasks</h3>
                 <div className="content-head-right flex items-center">
-                    <CustomSearchField onChange={handleAsyncChange} value={search} placeholder="Search here" />
-                    <Button className="ml-2" handleClick={() => setIsSideFormOpen(true)}>
-                        <i className="ph ph-plus"></i><span className="sm:inline hidden">Project</span>
+                    <Button className="ml-2 hover:bg-white hover:text-primary border-primary border-1 transition-300">
+                        <i className='ph ph-funnel'></i>
+                    </Button>
+                    <Button className="ml-2 hover:bg-white hover:text-primary border-primary border-1 transition-300" handleClick={() => setIsTaskOpen(true)}>
+                        <i className="ph ph-plus"></i>
                     </Button>
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-5 bg-white p-3 rounded">
-                {filteredProjects?.length ? filteredProjects.map(project => (
-                    <ProjectDetails key={project.id} project={project} />
-                )) : <div className="page w-screen">
-                    <div className="w-full h-full flex items-center justify-center">
-                        <p className="text-2xl text-gray-400">No projects found</p>
-                    </div>
-                </div>
-                }
+            <div className="bg-white p-3 rounded page overflow-x-auto">
+                <Table customColumns={customColumns} />
             </div>
-
-            {isSideFormOpen && <ProjectForm onClose={() => setIsSideFormOpen(false)} onSubmit={handleSubmit} />}
+            {isTaskOpen && <TaskForm onClose={() => setIsTaskOpen(false)} onSubmit={handleSubmit} />}
         </div>
-    );
-};
+    )
+}
 
-const ProjectForm = ({ onClose, onSubmit }) => {
-    const [formData, setFormData] = useState({
-        projectName: "",
-        description: "",
-        startDate: new Date(),
-        teamMembers: [{ name: "", role: "" }],
-        message: ""
-    });
-
-    const teamDesignation = ["Designer", "Developer", "Tester"].map(role => ({ label: role, value: role }));
-
-    const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-
-    const handleDateChange = (date) => setFormData(prev => ({ ...prev, startDate: date }));
-
-    const handleTeamChange = (index, field, value) => {
-        const updatedTeam = [...formData.teamMembers];
-        updatedTeam[index][field] = value;
-        setFormData(prev => ({ ...prev, teamMembers: updatedTeam }));
-    };
-
-    const addTeamMember = (e) => {
-        e.preventDefault(); // Add this
-        setFormData((prev) => ({
-            ...prev,
-            teamMembers: [...prev.teamMembers, { name: "", role: "" }],
-        }));
-    };
-
-    const removeTeamMember = (index) => {
-        setFormData(prev => ({ ...prev, teamMembers: prev.teamMembers.filter((_, i) => i !== index) }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
-
+const TaskForm = () => {
     return (
         <div className="w-full h-full fixed top-18 left-0 bg-[#0000004d] flex justify-end">
             <div className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/4 h-[calc(100vh-72px)] bg-white shadow-lg p-5 overflow-y-auto">
@@ -243,7 +288,7 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                 </form>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Projects;
+export default Tasks
