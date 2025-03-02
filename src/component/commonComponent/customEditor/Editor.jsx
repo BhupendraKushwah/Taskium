@@ -3,13 +3,14 @@ import { Controller } from 'react-hook-form';
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css';
 
-const Editor = ({ name, control }) => {
+const Editor = ({ name, control, rules}) => {
 
   return (
     <div className='w-full'>
       <Controller
         name={name}
         control={control}
+        rules={rules}
         render={({ field: { onChange } }) => (
           <ReactQuill
             onChange={onChange}

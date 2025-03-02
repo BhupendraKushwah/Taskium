@@ -103,7 +103,7 @@ const Table = ({ customColumns = [] }) => {
 
   // Memoize columns
   const columns = useMemo(() => {
-    return customColumns.map((column) => Object.keys(column)[0]);
+    return customColumns.filter((column) => column.isActive).map((column) => Object.keys(column)[0]);
   }, [tasks, customColumns]);
 
   const savedWidth = useMemo(() => localStorage.getItem('columnWidths'), [])
