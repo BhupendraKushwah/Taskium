@@ -259,7 +259,9 @@ polyline {
   padding: 10px;
 }
 
-
+.ant-picker{
+  padding: 7px;
+}
 /* Custom focus and hover styles */
 .ant-picker:hover,
 .ant-picker-focused {
@@ -277,6 +279,19 @@ polyline {
 .css-t3ipsp-control{
   border-color: #009966 !important;
 }
+.css-1jqq78o-placeholder{
+  color: #c2c0c0 !important;  
+  font-size: 14px !important;
+  font-family: "Prompt", serif;
+}
+.css-4rmduw-control{
+  border-radius: 7px !important;
+  background: #ffffff ;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #d9d9d9 !important;
+  padding: 0 !important;
+}
 
 .css-757vwy-control{
   padding: 2px 0;
@@ -284,6 +299,7 @@ polyline {
 
 .css-1dimb5e-singleValue{
   color: #4e4e4e !important;
+  font-size: 14px !important;
 }
 
 .css-v7duua:hover{
@@ -306,4 +322,14 @@ input::placeholder {
 .no-scroll {
   overflow: hidden !important; /* Prevent scrolling */
   height: 100vh;
+}
+
+.quill-container {
+  height: 200px; 
+  overflow-y: auto; 
+}
+
+.quill {
+  height: 200px; 
+  overflow-y: auto; 
 }

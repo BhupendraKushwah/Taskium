@@ -3,15 +3,15 @@ import React from 'react'
 const Input = ({
     children,
     className = '',
-    ref = null,
     onChange,
     type = 'text',
     placeholder='Enter your text here',
     ...props
-}) => {
+},ref) => {
     return (
         <div>
             <input
+                ref={ref}
                 type={type}
                 placeholder={placeholder}
                 className={`p-2 border-gray-300 border rounded-md 
@@ -28,4 +28,4 @@ const Input = ({
     )
 }
 
-export default Input
+export default React.forwardRef(Input);

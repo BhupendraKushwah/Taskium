@@ -1,10 +1,9 @@
 import React from "react";
 import { DatePicker } from "antd";
 
-function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,...props }) {
+function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,...props },ref) {
   // Handle the date selection event
   const handleDateChange = (date, dateString) => {
-    console.log("Selected Date:", dateString);
     if (onDateChange) {
       onDateChange(dateString); // Call the parent callback
     }
@@ -13,6 +12,7 @@ function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,.
   return (
     <div className="flex items-center w-full">
       <DatePicker
+      ref={ref}
         defaultValue={defaultValue}
         onChange={handleDateChange}
         className={`border-primary p-2 ${className}`}
@@ -26,4 +26,4 @@ function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,.
   );
 }
 
-export default CustomDatepicker;
+export default React.forwardRef(CustomDatepicker);

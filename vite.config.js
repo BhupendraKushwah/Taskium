@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['antd']
+    include: ['antd'],
+    force: true
   }
 });
