@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { convertDate } from "../../utils/date-format";
 import { useProject } from "../../context/ProjectContext/ProjectContext";
-import Button from "../commonComponent/customFields/Button";
+import {Button} from "../commonComponent/customFields";
 
 const ProjectDetails = ({ project }) => {
     const { deleteProject } = useProject();
@@ -109,8 +109,7 @@ const ProjectDetails = ({ project }) => {
                     type="button"
                     bgColor="bg-white"
                     textColor="text-red-500"
-                    className="border-red-500 border rounded p-1 hover:bg-red-500 hover:text-white transition-colors duration-200"
-                    aria-label="Delete project"
+                    className="border rounded p-1 hover:bg-red-200 hover:border-red-500 border-1 transition-colors duration-200"
                 >
                     <i className="ph-duotone ph-trash text-lg"></i>
                 </Button>

@@ -19,6 +19,7 @@ const CustomMultiSelectField = forwardRef(({ options = [], className = '', onCha
                     border: "1.5px solid #c9ccd0",
                     color: textColor,
                     boxShadow: "none",
+                    cursor: "pointer",
                     "&:hover": { border: "1.5px solid #009966" },
                 }),
                 option: (base, { isSelected }) => ({

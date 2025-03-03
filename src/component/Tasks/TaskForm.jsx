@@ -1,9 +1,6 @@
-import React  from 'react'
-import Button from '../commonComponent/customFields/Button'
-import Input from '../commonComponent/customFields/Input';
-import CustomMultiSelectField from '../commonComponent/customFields/CustomMultiSelectField';
+import React from 'react'
+import { Button, Input, CustomMultiSelectField, Datepicker } from '../commonComponent/customFields'
 import { Controller, useForm } from 'react-hook-form';
-import CustomDatepicker from '../commonComponent/customFields/Datepicker';
 import { TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import CustomEditor from '../commonComponent/customEditor/Editor';
@@ -187,7 +184,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                 control={control}
                                 rules={{ required: 'Start Date is required!' }}
                                 render={({ field }) => (
-                                    <CustomDatepicker
+                                    <Datepicker
                                         className="w-full"
                                         ref={field.ref}
                                         onDateChange={field.onChange}
@@ -210,7 +207,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                 control={control}
                                 rules={{ required: 'Due Date is required!' }}
                                 render={({ field }) => (
-                                    <CustomDatepicker
+                                    <Datepicker
                                         className="w-full"
                                         ref={field.ref}
                                         onDateChange={field.onChange}

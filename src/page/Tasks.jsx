@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import Button from '../component/commonComponent/customFields/Button'
+import { Button } from '../component/commonComponent/customFields/'
 import Table from '../component/DraggableTable/Table';
 import { useTask } from '../context/TaskContext/TaskContext';
 import TaskForm from '../component/Tasks/TaskForm';
+import CustomColumn from '../component/DraggableTable/CustomColumn';
 
 
 const Tasks = () => {
@@ -10,6 +11,7 @@ const Tasks = () => {
         open: false,
         id: null
     });
+    const [customColumnsOpen, setCustomColumnsOpen] = useState(false);
     const { addTask, deleteTask, updateTask, getTask } = useTask();
     const initialData = [
         {
@@ -118,25 +120,31 @@ const Tasks = () => {
         }
     ]
 
-    let customColumns = [
-        { "subject": "Subject", "field": "text","isActive":false },
-        {
-            "assigneeData": "Assignee", "field": "select","isActive":true ,"option": Array.from(new Set(initialData.flatMap(item =>
-                JSON.stringify({ label: item.assigneeData, value: item.assigneeData })
-            ))).map(item => JSON.parse(item))
-        },
-        {
-            "createdBy": "Created By", "field": "select","isActive":true, "option": Array.from(new Set(initialData.flatMap(item =>
-                JSON.stringify({ label: item.createdBy, value: item.createdBy })
-            ))).map(item => JSON.parse(item))
-        },
-        { "createdOn": "Created On", "field": "date","isActive":true },
-        { "dueDate": "Due Date", "field": "date" ,"isActive":true},
-        { "priority": "Priority", "field": "select", "isActive":true,"option": ['High', 'Medium', 'Low'].map(item => ({ label: item, value: item })) },
-        { "startDate": "Start Date", "field": "date" ,"isActive":true },
-        { "status": "Status", "field": "select","isActive":true, "option": ['New', 'InProgress', 'Completed'].map(item => ({ label: item, value: item })) },
-        { "type": "Type", "field": "select","isActive":true, "option": ['Bug', 'Feature'].map(item => ({ label: item, value: item })) }
-    ]
+    const [customColumns, setCustomColumns] = useState(
+        localStorage.getItem('customColumns') ? JSON.parse(localStorage.getItem('customColumns')) :
+            Object.keys(initialData[0]).map(item => {
+                switch (item) {
+                    case 'subject': return { "subject": "Subject", "field": "text", "isActive": true }
+                    case 'assigneeData': return {
+                        "assigneeData": "Assignee", "field": "select", "isActive": true, "option": Array.from(new Set(initialData.flatMap(item =>
+                            JSON.stringify({ label: item.assigneeData, value: item.assigneeData })
+                        ))).map(item => JSON.parse(item))
+                    }
+                    case 'createdBy': return {
+                        "createdBy": "Created By", "field": "select", "isActive": true, "option": Array.from(new Set(initialData.flatMap(item =>
+                            JSON.stringify({ label: item.createdBy, value: item.createdBy })
+                        ))).map(item => JSON.parse(item))
+                    }
+                    case 'createdOn': return { "createdOn": "Created On", "field": "date", "isActive": true }
+                    case 'dueDate': return { "dueDate": "Due Date", "field": "date", "isActive": true }
+                    case 'priority': return { "priority": "Priority", "field": "select", "isActive": true, "option": ['High', 'Medium', 'Low'].map(item => ({ label: item, value: item })) }
+                    case 'startDate': return { "startDate": "Start Date", "field": "date", "isActive": true }
+                    case 'type': return { "type": "Type", "field": "select", "isActive": true, "option": ['Bug', 'Feature'].map(item => ({ label: item, value: item })) }
+                    case 'status': return { "status": "Status", "field": "select", "isActive": true, "option": ['Open', 'In Progress', 'Closed'].map(item => ({ label: item, value: item })) }
+                    default: return null;
+                }
+            }).filter(Boolean))
+
 
 
     const handleSubmit = (data) => {
@@ -152,10 +160,10 @@ const Tasks = () => {
             <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white p-2 rounded">
                 <h3 className="text-lg">Tasks</h3>
                 <div className="content-head-right flex items-center">
-                    <Button className="ml-2 hover:bg-white hover:text-primary border-primary border-1 transition-300">
+                    <Button bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setCustomColumnsOpen(true)}>
                         <i className='ph ph-funnel'></i>
                     </Button>
-                    <Button className="ml-2 hover:bg-white hover:text-primary border-primary border-1 transition-300" handleClick={() => setTaskForm({ open: true, id: null })}>
+                    <Button  bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setTaskForm({ open: true, id: null })}>
                         <i className="ph ph-plus"></i>
                     </Button>
                 </div>
@@ -165,6 +173,9 @@ const Tasks = () => {
             </div>
             {taskForm.open
                 && <TaskForm taskId={taskForm.id} onClose={() => setTaskForm({ open: false, id: null })} onSubmit={handleSubmit} />}
+            {customColumnsOpen && <CustomColumn columns={customColumns} setCustomColumns={setCustomColumns} onClose={() => setCustomColumnsOpen(false)} />
+
+            }
         </div>
     )
 }

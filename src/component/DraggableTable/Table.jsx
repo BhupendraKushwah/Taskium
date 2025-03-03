@@ -1,12 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import CustomSearchField from '../commonComponent/customFields/CustomSearchField';
-import Button from '../commonComponent/customFields/Button';
+import { Button, Datepicker, CustomMultiSelectField, CustomSearchField } from '../commonComponent/customFields/index'
 import { useTask } from '../../context/TaskContext/TaskContext';
-import Datepicker from '../commonComponent/customFields/Datepicker';
-import CustomMultiSelectField from '../commonComponent/customFields/CustomMultiSelectField';
 
 // Memoized Column Header Component with Resizing
-const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize, field,option=[] }) => {
+const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize, field, option = [] }) => {
   const isFilterActive = filters[column]?.active || false;
   const searchValue = filters[column]?.value || '';
   const headerRef = useRef(null);
@@ -36,7 +33,12 @@ const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize,
       style={{ width: width, minWidth: '190px' }}
     >
       <div className="flex items-center justify-between">
-        <span className="truncate">{column}</span>
+        <div className="">
+          <span className="truncate">{column}</span>
+          <span className="ml-1 text-gray-400 text-sm cursor-pointer">
+            <i class="ph ph-arrows-down-up"></i>
+          </span>
+        </div>
         <Button
           className="ml-2 p-2 text-gray-500 rounded-full hover:bg-gray-100 transition-colors"
           textColor="text-primary"
@@ -223,7 +225,7 @@ const Table = ({ customColumns = [] }) => {
                   key={column}
                   column={customColumns.find((col) => Object.keys(col)[0] === column)[column]}
                   field={customColumns.find((col) => Object.keys(col)[0] === column)['field']}
-                  option = {customColumns.find((col) => Object.keys(col)[0] === column)['option']||[]}
+                  option={customColumns.find((col) => Object.keys(col)[0] === column)['option'] || []}
                   filters={filters}
                   setFilters={setFilters}
                   width={columnWidths[column] || 150}

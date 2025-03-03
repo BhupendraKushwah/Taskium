@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import CustomSearchField from "../component/commonComponent/customFields/CustomSearchField";
+import { CustomSearchField, Button, Input, Datepicker, CustomMultiSelectField } from "../component/commonComponent/customFields/";
 import ProjectDetails from "../component/projects/ProjectData";
-import Button from '../component/commonComponent/customFields/Button';
-import Input from "../component/commonComponent/customFields/Input";
-import Datepicker from "../component/commonComponent/customFields/Datepicker";
-import CustomMultiselect from "../component/commonComponent/customFields/CustomMultiSelectField";
 import dayjs from "dayjs";
 import { useProject } from "../context/ProjectContext/ProjectContext";
 
@@ -58,7 +54,7 @@ const Projects = () => {
                 <h3 className="text-lg">Projects</h3>
                 <div className="content-head-right flex items-center">
                     <CustomSearchField onChange={handleAsyncChange} value={search} placeholder="Search here" />
-                    <Button className="ml-2" handleClick={() => setIsSideFormOpen(true)}>
+                    <Button className="ml-2 flex items-center " handleClick={() => setIsSideFormOpen(true)}>
                         <i className="ph ph-plus"></i><span className="sm:inline hidden">Project</span>
                     </Button>
                 </div>
@@ -181,7 +177,7 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                         </div>
                         {formData.teamMembers.map((member, index) => (
                             <div key={index} className="flex gap-2 mb-2">
-                                <CustomMultiselect
+                                <CustomMultiSelectField
                                     options={teamDesignation}
                                     placeholder="Role"
                                     onChange={(e) => handleTeamChange(index, "role", e.value)}
