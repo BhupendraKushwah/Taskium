@@ -3,7 +3,7 @@ import { Button, Datepicker, CustomMultiSelectField, CustomSearchField } from '.
 import { useTask } from '../../context/TaskContext/TaskContext';
 
 // Memoized Column Header Component with Resizing
-const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize, field, option = [] }) => {
+const ColumnHeader = React.memo(({ setSortBy, column, filters, setFilters, width, onResize, field, option = [] }) => {
   const isFilterActive = filters[column]?.active || false;
   const searchValue = filters[column]?.value || '';
   const headerRef = useRef(null);
@@ -26,6 +26,19 @@ const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize,
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
+
+  const setSortColumn = (column) => {
+    setSortBy((prev) => {
+      const isSameColumn = prev.column === column;
+      const newSortType = isSameColumn 
+        ? prev.sortType === 'asc' ? 'desc' : 'asc' 
+        : 'desc';
+      return {
+        sortType: newSortType,
+        column: column,
+      };
+    });
+  };
   return (
     <th
       ref={headerRef}
@@ -35,8 +48,8 @@ const ColumnHeader = React.memo(({ column, filters, setFilters, width, onResize,
       <div className="flex items-center justify-between">
         <div className="">
           <span className="truncate">{column}</span>
-          <span className="ml-1 text-gray-400 text-sm cursor-pointer">
-            <i class="ph ph-arrows-down-up"></i>
+          <span className="ml-1 text-gray-400 text-sm cursor-pointer" onClick={() => setSortColumn(column)}>
+            <i className="ph ph-arrows-down-up"></i>
           </span>
         </div>
         <Button
@@ -102,6 +115,11 @@ const Table = ({ customColumns = [] }) => {
   const [filters, setFilters] = useState({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [columnWidths, setColumnWidths] = useState({});
+  const [filteredRows, setFilteredRows] = useState([])
+  const [sortBy, setSortBy] = useState({
+    column: null,
+    sortType: 'asc'
+  })
 
   // Memoize columns
   const columns = useMemo(() => {
@@ -117,7 +135,8 @@ const Table = ({ customColumns = [] }) => {
       initialWidths[column] = 190;
     });
     setColumnWidths(savedWidth ? JSON.parse(savedWidth) : initialWidths);
-  }, [columns]);
+    setFilteredRows(filtertableRow)
+  }, [columns,filters]);
 
   // Handle column resize
   const handleResize = (column, newWidth) => {
@@ -130,27 +149,52 @@ const Table = ({ customColumns = [] }) => {
     localStorage.setItem('columnWidths', JSON.stringify({ ...columnWidths, [targetCol]: newWidth }));
   };
 
-  // Filter the rows based on all active filters
-  const filteredRows = tasks.filter((row) => {
-    return Object.entries(filters).every(([column, filter]) => {
-      if (!filter.active || !filter.value) return true;
+  const sortByFunc = ({ column, sortType }) => {
+    let col2 = Object.keys(customColumns.find((col) => Object.values(col)[0] === column))[0];
 
-      let col = customColumns.find((col) => Object.values(col)[0] === column)
-      let [targetCol] = Object.keys(col)
+    let sortedRows = [...filteredRows]; // Shallow copy to avoid mutating original state
 
-      switch (filter.field) {
-        case 'date':
-          return new Date(row[targetCol]) >= new Date(filter.value);
-        case 'select':
-          return row[targetCol].includes(filter.value);
-        case 'text':
-          return row[targetCol]
-            ?.toString()
-            .toLowerCase()
-            .includes(filter.value.toLowerCase());
+    sortedRows.sort((a, b) => {
+      const valA = a[col2]?.toString()?.toLowerCase() || '';
+      const valB = b[col2]?.toString()?.toLowerCase() || '';
+
+      if (sortType === 'asc') {
+        return valA > valB ? 1 : valA < valB ? -1 : 0;
+      } else {
+        return valA < valB ? 1 : valA > valB ? -1 : 0;
       }
     });
-  });
+    setFilteredRows(sortedRows)
+  }
+
+  useEffect(() => {
+    sortBy.column &&
+      sortByFunc(sortBy)
+  }, [sortBy])
+
+  // Filter the rows based on all active filters
+  const filtertableRow = () => {
+    return tasks.filter((row) => {
+      return Object.entries(filters).every(([column, filter]) => {
+        if (!filter.active || !filter.value) return true;
+
+        let col = customColumns.find((col) => Object.values(col)[0] === column)
+        let [targetCol] = Object.keys(col)
+
+        switch (filter.field) {
+          case 'date':
+            return new Date(row[targetCol]) >= new Date(filter.value);
+          case 'select':
+            return row[targetCol].includes(filter.value);
+          case 'text':
+            return row[targetCol]
+              ?.toString()
+              .toLowerCase()
+              .includes(filter.value.toLowerCase());
+        }
+      });
+    });
+  }
 
   return (
     <div className="w-full h-full p-4 bg-gray-50">
@@ -222,6 +266,7 @@ const Table = ({ customColumns = [] }) => {
             <tr className="select-none">
               {columns.map((column) => (
                 <ColumnHeader
+                  setSortBy={setSortBy}
                   key={column}
                   column={customColumns.find((col) => Object.keys(col)[0] === column)[column]}
                   field={customColumns.find((col) => Object.keys(col)[0] === column)['field']}

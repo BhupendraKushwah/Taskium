@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import CustomEditor from '../commonComponent/customEditor/Editor';
+import {useProject} from '../../context/ProjectContext/ProjectContext'
 
 const TaskForm = ({ task, onClose, onSubmit }) => {
     const { handleSubmit, control, formState: { errors }, } = useForm({
@@ -17,8 +18,10 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
             status: task?.status || '',
             subject: task?.subject || '',
             type: task?.type || '',
+            project: task?.project || '',
         }
     })
+    const {projects} = useProject()
     const users = [
         { label: "Priya Mehta", value: "Priya Mehta" },
         { label: "Ankit Rawat", value: "Ankit Rawat" },
@@ -27,7 +30,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
         { label: "Ritu Sharma", value: "Ritu Sharma" },
         { label: "Manoj Kumar", value: "Manoj Kumar" },
     ]
-
+    const projectData = projects.map(project => ({ label: project.name, value: project._id }))
     const taskType = [
         { label: "Bug", value: "Bug" },
         { label: "Feature", value: "Feature" },
@@ -105,25 +108,25 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                             )}
                         </div>
 
-                        {/* Type */}
+                        {/* Project */}
                         <div className='relative w-1/2'>
-                            <label className="text-gray-400 text-sm">Type</label>
+                            <label className="text-gray-400 text-sm">Project</label>
                             <Controller
-                                name="type"
+                                name="project"
                                 control={control}
-                                rules={{ required: 'Type is required!' }}
+                                rules={{ required: 'Project is required!' }}
                                 render={({ field }) => (
                                     <CustomMultiSelectField
                                         ref={field.ref}
-                                        options={taskType}
+                                        options={projectData}
                                         onChange={field.onChange}
                                         placeholder="Select"
                                     />
                                 )}
                             />
-                            {errors.type && (
+                            {errors.project && (
                                 <div className="absolute -top-2 left-0 mt-1 ml-2 px-2 py-1 bg-red-50 border border-red-200 text-red-600 text-xs rounded-md shadow-sm animate-bounceIn">
-                                    {errors.type.message}
+                                    {errors.project.message}
                                 </div>
                             )}
                         </div>
@@ -223,24 +226,48 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                         </div>
                     </div>
                     {/* Estimated Time */}
-                    <div className='relative w-full'>
-                        <label className="text-gray-400 text-sm">Estimated Time</label>
-                        <div className="w-full">
+                    <div className="flex gap-4">
+                        <div className='relative w-1/2'>
+                            <label className="text-gray-400 text-sm">Estimated Time</label>
+                            <div className="w-full">
+                                <Controller
+                                    name='estimatedTime'
+                                    control={control}
+                                    rules={{ required: 'Estimated Time is required!' }}
+                                    render={({ field }) => (
+                                        <TimePicker
+                                            ref={field.ref}
+                                            onChange={time => field.onChange(time ? dayjs(time).format("HH:mm:ss") : "")}
+                                            className="w-full p-4 border rounded placeholder-gray-200"
+                                        />
+                                    )}
+                                />
+                                {errors.estimatedTime && (
+                                    <div className="absolute -top-2 left-0 mt-1 ml-2 px-2 py-1 bg-red-50 border border-red-200 text-red-600 text-xs rounded-md shadow-sm animate-bounceIn">
+                                        {errors.estimatedTime.message}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {/* Type */}
+                        <div className='relative w-1/2'>
+                            <label className="text-gray-400 text-sm">Type</label>
                             <Controller
-                                name='estimatedTime'
+                                name="type"
                                 control={control}
-                                rules={{ required: 'Estimated Time is required!' }}
+                                rules={{ required: 'Type is required!' }}
                                 render={({ field }) => (
-                                    <TimePicker
+                                    <CustomMultiSelectField
                                         ref={field.ref}
-                                        onChange={time => field.onChange(time ? dayjs(time).format("HH:mm:ss") : "")}
-                                        className="w-full p-3 border rounded placeholder-gray-200"
+                                        options={taskType}
+                                        onChange={field.onChange}
+                                        placeholder="Select"
                                     />
                                 )}
                             />
-                            {errors.estimatedTime && (
+                            {errors.type && (
                                 <div className="absolute -top-2 left-0 mt-1 ml-2 px-2 py-1 bg-red-50 border border-red-200 text-red-600 text-xs rounded-md shadow-sm animate-bounceIn">
-                                    {errors.estimatedTime.message}
+                                    {errors.type.message}
                                 </div>
                             )}
                         </div>
