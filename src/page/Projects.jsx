@@ -62,7 +62,7 @@ const Projects = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-5 bg-white p-3 rounded">
                 {filteredProjects?.length ? filteredProjects.map(project => (
-                    <ProjectDetails key={project.id} project={project} />
+                    <ProjectDetails key={project._id} project={project} />
                 )) : <div className="page w-screen">
                     <div className="w-full h-full flex items-center justify-center">
                         <p className="text-2xl text-gray-400">No projects found</p>

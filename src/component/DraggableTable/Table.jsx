@@ -125,7 +125,7 @@ const Table = ({ customColumns = [] }) => {
   const columns = useMemo(() => {
     return customColumns.filter((column) => column.isActive).map((column) => Object.keys(column)[0]);
   }, [tasks, customColumns]);
-  console.log(customColumns);
+  
   const savedWidth = useMemo(() => localStorage.getItem('columnWidths'), [])
 
   useEffect(() => {
@@ -262,7 +262,7 @@ const Table = ({ customColumns = [] }) => {
       {/* Desktop Table */}
       <div className="hidden sm:block h-full overflow-x-auto">
         <table className="w-full border-collapse text-sm font-sans table-fixed">
-          <thead>
+          <thead className='sticky top-0'>
             <tr className="select-none">
               {columns.map((column) => (
                 <ColumnHeader

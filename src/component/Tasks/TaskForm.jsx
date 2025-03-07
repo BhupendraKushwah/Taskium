@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import CustomEditor from '../commonComponent/customEditor/Editor';
-import {useProject} from '../../context/ProjectContext/ProjectContext'
+import { useProject } from '../../context/ProjectContext/ProjectContext'
 
 const TaskForm = ({ task, onClose, onSubmit }) => {
     const { handleSubmit, control, formState: { errors }, } = useForm({
@@ -21,7 +21,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
             project: task?.project || '',
         }
     })
-    const {projects} = useProject()
+    const { projects } = useProject()
     const users = [
         { label: "Priya Mehta", value: "Priya Mehta" },
         { label: "Ankit Rawat", value: "Ankit Rawat" },
@@ -30,7 +30,12 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
         { label: "Ritu Sharma", value: "Ritu Sharma" },
         { label: "Manoj Kumar", value: "Manoj Kumar" },
     ]
-    const projectData = projects.map(project => ({ label: project.name, value: project._id }))
+    const projectData = Array.from(
+        new Map(projects.map(project =>
+            [project.name, { label: project.name, value: project._id }]
+        )).values()
+    );
+      
     const taskType = [
         { label: "Bug", value: "Bug" },
         { label: "Feature", value: "Feature" },
@@ -96,7 +101,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                     <CustomMultiSelectField
                                         ref={field.ref} // Here is the ref binding 🔥
                                         options={users}
-                                        onChange={field.onChange}
+                                        onChange={(selected) => field.onChange(selected.value)}
                                         placeholder="Select"
                                     />
                                 )}
@@ -119,7 +124,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                     <CustomMultiSelectField
                                         ref={field.ref}
                                         options={projectData}
-                                        onChange={field.onChange}
+                                        onChange={(selected) => field.onChange(selected.value)}
                                         placeholder="Select"
                                     />
                                 )}
@@ -143,7 +148,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                     <CustomMultiSelectField
                                         ref={field.ref} // Here is the ref binding 🔥
                                         options={statusOption}
-                                        onChange={field.onChange}
+                                        onChange={(selected) => field.onChange(selected.value)}
                                         placeholder="Select"
                                     />
                                 )}
@@ -166,7 +171,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                     <CustomMultiSelectField
                                         ref={field.ref}
                                         options={priorityOption}
-                                        onChange={field.onChange}
+                                        onChange={(selected) => field.onChange(selected.value)}
                                         placeholder="Select"
                                     />
                                 )}
@@ -260,7 +265,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
                                     <CustomMultiSelectField
                                         ref={field.ref}
                                         options={taskType}
-                                        onChange={field.onChange}
+                                        onChange={(selected) => field.onChange(selected.value)}
                                         placeholder="Select"
                                     />
                                 )}
