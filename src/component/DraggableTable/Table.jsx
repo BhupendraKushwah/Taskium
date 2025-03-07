@@ -125,7 +125,7 @@ const Table = ({ customColumns = [] }) => {
   const columns = useMemo(() => {
     return customColumns.filter((column) => column.isActive).map((column) => Object.keys(column)[0]);
   }, [tasks, customColumns]);
-
+  console.log(customColumns);
   const savedWidth = useMemo(() => localStorage.getItem('columnWidths'), [])
 
   useEffect(() => {

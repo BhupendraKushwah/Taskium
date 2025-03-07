@@ -4,6 +4,7 @@ import Table from '../component/DraggableTable/Table';
 import { useTask } from '../context/TaskContext/TaskContext';
 import TaskForm from '../component/Tasks/TaskForm';
 import CustomColumn from '../component/DraggableTable/CustomColumn';
+import { useProject } from '../context/ProjectContext/ProjectContext';
 
 
 const Tasks = () => {
@@ -11,6 +12,7 @@ const Tasks = () => {
         open: false,
         id: null
     });
+    const {projects} = useProject();
     const [customColumnsOpen, setCustomColumnsOpen] = useState(false);
     const { addTask, deleteTask, updateTask, getTask } = useTask();
     const initialData = [
@@ -23,6 +25,7 @@ const Tasks = () => {
             "dueDate": "2025-02-28T00:00:00.000Z",
             "isCompleted": false,
             "priority": "High",
+            "project":'portfolio',
             "startDate": "2025-02-28T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -36,6 +39,7 @@ const Tasks = () => {
             "dueDate": "2025-02-28T00:00:00.000Z",
             "isCompleted": false,
             "priority": "High",
+            "project":'portfolio',
             "startDate": "2025-02-28T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -49,6 +53,7 @@ const Tasks = () => {
             "dueDate": "2025-02-28T00:00:00.000Z",
             "isCompleted": false,
             "priority": "High",
+            "project":'portfolio',
             "startDate": "2025-02-28T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -62,6 +67,7 @@ const Tasks = () => {
             "dueDate": "2025-02-28T00:00:00.000Z",
             "isCompleted": false,
             "priority": "High",
+            "project":'portfolio',
             "startDate": "2025-02-28T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -75,6 +81,7 @@ const Tasks = () => {
             "dueDate": "2025-03-01T00:00:00.000Z",
             "isCompleted": true,
             "priority": "Medium",
+            "project":'portfolio',
             "startDate": "2025-02-27T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -88,6 +95,7 @@ const Tasks = () => {
             "dueDate": "2025-03-03T00:00:00.000Z",
             "isCompleted": false,
             "priority": "High",
+            "project":'portfolio',
             "startDate": "2025-02-26T00:00:00.000Z",
             "status": "In Progress",
             "type": "Feature"
@@ -101,6 +109,7 @@ const Tasks = () => {
             "dueDate": "2025-03-02T00:00:00.000Z",
             "isCompleted": false,
             "priority": "Low",
+            "project":'portfolio',
             "startDate": "2025-02-25T00:00:00.000Z",
             "status": "Open",
             "type": "Bug"
@@ -114,12 +123,13 @@ const Tasks = () => {
             "dueDate": "2025-03-05T00:00:00.000Z",
             "isCompleted": false,
             "priority": "Medium",
+            "project":'portfolio',
             "startDate": "2025-02-24T00:00:00.000Z",
             "status": "In Progress",
             "type": "Feature"
         }
     ]
-
+    console.log(projects)
     const [customColumns, setCustomColumns] = useState(
         localStorage.getItem('customColumns') ? JSON.parse(localStorage.getItem('customColumns')) :
             Object.keys(initialData[0]).map(item => {
@@ -135,6 +145,9 @@ const Tasks = () => {
                             JSON.stringify({ label: item.createdBy, value: item.createdBy })
                         ))).map(item => JSON.parse(item))
                     }
+                    case 'project': return { "project": "Project", "field": "select", "isActive": true, "option": Array.from(
+                        new Map(projects.map(item => [item.name.toLowerCase(), { label: item.name, value: item.name.toLowerCase() }])).values()
+                      )}
                     case 'createdOn': return { "createdOn": "Created On", "field": "date", "isActive": true }
                     case 'dueDate': return { "dueDate": "Due Date", "field": "date", "isActive": true }
                     case 'priority': return { "priority": "Priority", "field": "select", "isActive": true, "option": ['High', 'Medium', 'Low'].map(item => ({ label: item, value: item })) }
@@ -161,7 +174,7 @@ const Tasks = () => {
                 <h3 className="text-lg">Tasks</h3>
                 <div className="content-head-right flex items-center">
                     <Button bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setCustomColumnsOpen(true)}>
-                        <i className='ph ph-funnel'></i>
+                        <i className='ph ph-faders-horizontal'></i>
                     </Button>
                     <Button  bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setTaskForm({ open: true, id: null })}>
                         <i className="ph ph-plus"></i>
