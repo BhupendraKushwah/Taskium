@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 :root {
   /* Base Colors */
   --base-black: hsl(216, 15%, 9%);
@@ -57,6 +58,48 @@
   /* Base color for icons */
 }
 
+/* Scrollbar */
+/* Global Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px; /* Mobile-friendly */
+  height: 8px;
+}
+
+@media (min-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 12px; /* Desktop size */
+    height: 12px;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); /* Soft gray gradient */
+  border-radius: 12px; /* Larger radius for modern look */
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05); /* Subtle depth */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #99f6e4, #2dd4bf); /* Soft teal gradient */
+  border-radius: 12px; /* Pill shape */
+  background-clip: padding-box; /* Clean edges */
+  border: 2px solid transparent; /* Adds padding effect */
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #99f6e4, #0d9488); /* Deeper teal on hover */
+  transform: scale(1.05); /* Slight pop */
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #5eead4, #0d9488); /* Even deeper when clicked */
+}
+
+/* Firefox fallback */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2dd4bf #e2e8f0; /* Teal thumb, gray track */
+}
 
 .ts-body {
   padding: 1.5rem;
@@ -76,7 +119,7 @@ h4 {
 
 /* Navbar styles */
 .navbar {
-  background-color: #262D38;
+  /* background-color: #262D38; */
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
@@ -282,7 +325,7 @@ polyline {
 .css-1jqq78o-placeholder{
   color: #c2c0c0 !important;  
   font-size: 14px !important;
-  font-family: "Prompt", serif;
+  font-family: "Inter", sans-serif;
 }
 .css-4rmduw-control{
   border-radius: 7px !important;
@@ -335,4 +378,16 @@ input::placeholder {
 .quill {
   height: 200px; 
   overflow-y: auto; 
+}
+
+input[type="checkbox"]:checked:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-90%, -75%) rotate(55deg);
+  width: 7px;
+  height: 12px;
+  border: solid #414141;
+  border-width: 0 2px 2px 0;
 }

@@ -3,6 +3,53 @@
     width: 100% !important; /* Ensure the table spans the container width */
     table-layout: fixed;    /* Force equal column widths */
 }
-.p-calendar{
-    width: 100%;
+
+/* Calendar.css */
+.p-calendar {
+    width: 300px !important;
+    height: 250px !important; /* Adjust as needed */
+    font-size: 14px;
+    overflow: hidden !important; /* Force no scroll */
+    display: flex; /* Better control over child elements */
+    flex-direction: column;
+}
+
+.p-calendar .p-datepicker {
+    min-width: unset !important;
+    min-height: unset !important; /* Override any min-height */
+    height: 100% !important;
+    padding: 0.25rem;
+    overflow: hidden !important;
+}
+
+/* Header adjustments */
+.p-datepicker-header {
+    padding: 0.2rem;
+    flex-shrink: 0; /* Prevent header from shrinking too much */
+}
+
+/* Force table to fit remaining space */
+.p-datepicker table {
+    height: calc(100% - 2rem) !important; /* Adjust for header */
+    margin: 0;
+    padding: 0;
+    overflow: hidden !important;
+}
+
+/* Tighten cell spacing */
+.p-datepicker table td {
+    padding: 0.1rem !important;
+}
+
+.p-datepicker table td > span {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    line-height: 1.8rem !important;
+    font-size: 12px !important;
+    margin: 0;
+}
+
+/* Ensure no overflow in other months */
+.p-datepicker .p-datepicker-other-month {
+    font-size: 12px !important;
 }

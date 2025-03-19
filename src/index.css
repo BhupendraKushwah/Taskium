@@ -18,6 +18,9 @@
   --color-text-sub: hsl(223, 7%, 18%) !important;
   --color-base-black: hsl(216, 15%, 9%) !important;
   --color-base-white: hsl(0, 0%, 100%) !important;
+  --color-fuchsia-300: oklch(.833 .145 321.434);
+  --color-rose-400: oklch(.712 .194 13.428);
+  --color-blue-300: oklch(.809 .105 251.813);
   --height-main-body: calc(100vh - 64px) !important;
 
 }
@@ -26,5 +29,5 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Prompt", serif;
+  font-family: "Inter", sans-serif;
 }
