@@ -124,10 +124,10 @@ const ProjectDashboard = () => {
 
   return (
     <section className="bg-gradient-to-br from-base-white-darker to-base-white-dark min-h-screen">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container">
         {/* Header */}
-        <div className="content-head flex flex-col sm:flex-row sm:items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-md gap-4 sm:gap-0">
-          <h3 className="text-lg font-semibold text-base-black truncate">
+        <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white p-2 rounded">
+          <h3 className="text-lg text-base-black truncate">
             {greetMessage()}, Bhupendra
           </h3>
           <div className="content-head-right flex items-center text-base-black-light text-sm space-x-2 sm:space-x-4">
@@ -137,7 +137,7 @@ const ProjectDashboard = () => {
         </div>
 
         {/* Updated Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
           {/* Today Task */}
           <div className="rounded-xl cursor-pointer p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 bg-white transition-all duration-300 min-h-[300px]">
             <h2 className="text-sm lg:text-lg font-semibold mb-4 text-base-black flex items-center">
@@ -253,7 +253,7 @@ const ProjectDashboard = () => {
               <span className="mr-2 bg-fuchsia-300 px-2 py-3 rounded"></span>
               {dashboardContent.projects.title}
             </h2>
-            <div className="space-y-3 flex flex-wrap px-2 text-sm text-text-sub overflow-y-auto max-h-[200px]">
+            <div className="space-y-3 flex flex-wrap px-2 text-sm text-text-sub overflow-y-auto max-h-[300px]">
               {dashboardContent.projects.items.map((item, index) => (
                 <div
                   key={`projects-${index}`}

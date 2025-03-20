@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
+import { NavLink } from "react-router";
 
 const Navbar = ({ handleSideNav }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -65,12 +66,12 @@ const Navbar = ({ handleSideNav }) => {
                   <Toggle size="sm" checked={isChecked} onChange={() => setIsChecked(!isChecked)} /></div>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <NavLink
+                    to="/settings"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
                   >
                     Settings
-                  </a>
+                  </NavLink>
                 </li>
                 <li>
                   <a

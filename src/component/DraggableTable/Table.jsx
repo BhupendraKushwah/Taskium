@@ -261,7 +261,7 @@ const Table = ({ customColumns = [] }) => {
 
       {/* Desktop Table */}
       <div className="hidden sm:block h-full overflow-x-auto">
-        <table className="w-full border-collapse text-sm font-sans table-fixed">
+        <table className="w-full border-collapse text-sm table-fixed">
           <thead className='sticky top-0'>
             <tr className="select-none">
               {columns.map((column) => (

@@ -3,12 +3,12 @@
 
 @theme {
   --color-navbar: #262D38 !important;
-  --color-primary: #009966 !important;
+  --color-primary: oklch(0.6 0.118 184.704) !important;
   --color-icon-base: #909294 !important;
-  --color-primary-20: hsl(160, 80%, 80%);
-  --color-primary-10: hsl(160, 80%, 95%);
-  --color-primary-15: hsl(160, 80%, 90%);
-  --color-primary-05: hsl(160, 100%, 98%);
+  --color-primary-20: oklch(0.855 0.138 181.071);
+  --color-primary-10: oklch(0.953 0.051 180.801);
+  --color-primary-15: oklch(0.91 0.096 180.426);
+  --color-primary-05: oklch(0.984 0.014 180.72);
   --color-secondary: hsl(0, 5.70%, 89.60%) !important;
   --color-primary-light: hsl(160, 75%, 50%) !important;
   --color-active-link: #FF6B6B !important;

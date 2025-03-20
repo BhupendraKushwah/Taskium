@@ -54,7 +54,7 @@ const Projects = () => {
                 <h3 className="text-lg">Projects</h3>
                 <div className="content-head-right flex items-center">
                     <CustomSearchField onChange={handleAsyncChange} value={search} placeholder="Search here" />
-                    <Button className="ml-2 flex items-center " handleClick={() => setIsSideFormOpen(true)}>
+                    <Button className="ml-2 sm:flex block items-center " handleClick={() => setIsSideFormOpen(true)}>
                         <i className="ph ph-plus"></i><span className="sm:inline hidden">Project</span>
                     </Button>
                 </div>

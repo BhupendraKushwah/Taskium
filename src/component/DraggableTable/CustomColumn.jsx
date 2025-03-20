@@ -21,7 +21,7 @@ const CustomColumn = ({ columns, onClose, setCustomColumns }) => {
                         <i className="ph ph-arrow-line-right text-xl"></i>
                     </button>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 text-sm text-gray-600">
                     {columns.map((column, index) => {
                         let key = Object.keys(column).find(key => key !== 'field' && key !== 'isActive');
                         return (

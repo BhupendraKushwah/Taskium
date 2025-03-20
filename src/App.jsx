@@ -8,6 +8,7 @@ import NotFound from './page/NotFound';
 import ProjectContextProvider from './context/ProjectContext/ProjectContextProvider';
 import Tasks from './page/Tasks';
 import TaskContextProvider from './context/TaskContext/TaskContextProvider';
+import Setting from './page/Setting';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="" element={<DashboardContent />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/tasks" element={<Tasks />} />
+            <Route path="/settings" element={<Setting />} />
             <Route path='*' element={<NotFound />} />
           </Route >
         </Routes>
