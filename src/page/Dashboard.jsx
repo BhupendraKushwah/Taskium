@@ -3,6 +3,7 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import Calendar from '../component/commonComponent/calendar/Calender';
 import AttendanceSheet from '../component/Dashboard/AttendanceSheet';
+import PieChart from '../component/Dashboard/PieChart';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -51,43 +52,6 @@ const ProjectDashboard = () => {
     })
   );
 
-  const calculateTaskStats = () => {
-    const allTasks = [...dashboardContent.todayTasks.items, ...dashboardContent.pendingTasks.items];
-    return {
-      done: allTasks.filter((t) => t.status === 'done').length,
-      inProgress: allTasks.filter((t) => t.status === 'in-progress').length,
-      pending: allTasks.filter((t) => t.status === 'pending').length,
-    };
-  };
-
-  const taskStats = calculateTaskStats();
-
-  const pieData = {
-    labels: ['Done', 'In Progress', 'Pending'],
-    datasets: [
-      {
-        data: [taskStats.done, taskStats.inProgress, taskStats.pending],
-        backgroundColor: ['hsl(160, 80%, 80%)', 'hsl(150, 85%, 40%)', 'hsl(160, 80%, 95%)'],
-        borderColor: ['hsl(160, 100%, 35%)', 'hsl(160, 100%, 40%)', 'hsl(160, 75%, 50%)'],
-        borderWidth: 2,
-      },
-    ],
-  };
-
-  const pieOptions = {
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: { color: 'hsl(216, 15%, 9%)', font: { size: 14 } },
-      },
-      tooltip: {
-        backgroundColor: 'hsl(223, 7%, 18%)',
-        titleColor: 'hsl(0, 0%, 100%)',
-        bodyColor: 'hsl(0, 0%, 100%)',
-      },
-    },
-    maintainAspectRatio: false,
-  };
 
   const greetMessage = () => {
     const hours = new Date().getHours();
@@ -123,35 +87,35 @@ const ProjectDashboard = () => {
   }, []);
 
   return (
-    <section className="bg-gradient-to-br from-base-white-darker to-base-white-dark min-h-screen">
+    <section className="bg-gradient-to-br from-base-white-darker to-base-white-dark dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-900 min-h-screen w-full">
       <div className="container">
         {/* Header */}
-        <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white p-2 rounded">
-          <h3 className="text-lg text-base-black truncate">
+        <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white dark:bg-gray-800 p-2 rounded dark:border-gray-700">
+          <h3 className="text-lg text-base-black dark:text-white truncate">
             {greetMessage()}, Bhupendra
           </h3>
-          <div className="content-head-right flex items-center text-base-black-light text-sm space-x-2 sm:space-x-4">
+          <div className="content-head-right flex items-center text-base-black-light dark:text-gray-300 text-sm space-x-2 sm:space-x-4">
             <span className="truncate">{new Date().toDateString()}</span>
             <span className="flex-shrink-0">{time}</span>
           </div>
         </div>
 
         {/* Updated Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto ">
           {/* Today Task */}
-          <div className="rounded-xl cursor-pointer p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 bg-white transition-all duration-300 min-h-[300px]">
-            <h2 className="text-sm lg:text-lg font-semibold mb-4 text-base-black flex items-center">
+          <div className="rounded-xl cursor-pointer p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 bg-white dark:bg-gray-800 dark:border-gray-700 transition-all duration-300 min-h-[300px]">
+            <h2 className="text-sm lg:text-lg font-semibold mb-4 text-base-black dark:text-white flex items-center">
               <span className="mr-2 bg-primary-light px-2 py-3 rounded"></span>
               {dashboardContent.todayTasks.title}
             </h2>
-            <ul className="space-y-2 mb-4 text-sm text-text-sub overflow-y-auto max-h-[200px]">
+            <ul className="space-y-2 mb-4 text-sm text-text-sub dark:text-gray-300 overflow-y-auto max-h-[200px]">
               {dashboardContent.todayTasks.items.map((item, index) => (
                 <li
                   key={`today-${index}`}
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
                     item.status === 'done'
-                      ? 'line-through bg-gray-300 pointer-events-none opacity-50'
-                      : 'hover:text-text-highlight'
+                      ? 'line-through bg-gray-300 dark:bg-gray-600 pointer-events-none opacity-50'
+                      : 'hover:text-text-highlight dark:hover:text-gray-100'
                   }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
@@ -164,7 +128,7 @@ const ProjectDashboard = () => {
                             ? 'bg-primary-500 border-primary-700'
                             : item.status === 'in-progress'
                             ? 'bg-yellow-300 border-yellow-500'
-                            : 'bg-white border-gray-400'
+                            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
                         } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
                         defaultChecked={item.status === 'done'}
                       />
@@ -172,12 +136,12 @@ const ProjectDashboard = () => {
                     <span className="truncate">{item.text}</span>
                   </span>
                   <span
-                    className={`mt-2 sm:mt-0 border border-gray-200 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
+                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
                       item.priority === 'high'
-                        ? 'bg-red-100 text-red-600'
+                        ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200'
                         : item.priority === 'medium'
-                        ? 'bg-yellow-100 text-yellow-600'
-                        : 'bg-green-100 text-green-600'
+                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
+                        : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
                     }`}
                   >
                     {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)}
@@ -188,30 +152,30 @@ const ProjectDashboard = () => {
           </div>
 
           {/* Task Stats */}
-          <div className="rounded-xl cursor-pointer p-6 bg-white w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] flex flex-col">
-            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black items-center">
+          <div className="rounded-xl cursor-pointer p-6 bg-white dark:bg-gray-800 dark:border-gray-700 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] flex flex-col">
+            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black dark:text-white items-center">
               <span className="mr-2 bg-primary-20 px-2 py-3 rounded"></span>
               {dashboardContent.taskStats.title}
             </h2>
             <div className="flex-grow relative">
-              <Pie data={pieData} options={pieOptions} />
+             <PieChart dashboardContent={dashboardContent} />
             </div>
           </div>
 
           {/* Pending Tasks */}
-          <div className="rounded-xl cursor-pointer p-6 bg-white w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px]">
-            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black items-center">
+          <div className="rounded-xl cursor-pointer p-6 bg-white dark:bg-gray-800 dark:border-gray-700 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px]">
+            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black dark:text-white items-center">
               <span className="mr-2 bg-blue-300 px-2 py-3 rounded"></span>
               {dashboardContent.pendingTasks.title}
             </h2>
-            <ul className="space-y-2 text-sm text-text-sub overflow-y-auto max-h-[200px]">
+            <ul className="space-y-2 text-sm text-text-sub dark:text-gray-300 overflow-y-auto max-h-[200px]">
               {dashboardContent.pendingTasks.items.map((item, index) => (
                 <li
                   key={`pending-${index}`}
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
                     item.status === 'done'
-                      ? 'line-through bg-gray-300 pointer-events-none opacity-50'
-                      : 'hover:text-text-highlight'
+                      ? 'line-through bg-gray-300 dark:bg-gray-600 pointer-events-none opacity-50'
+                      : 'hover:text-text-highlight dark:hover:text-gray-100'
                   }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
@@ -224,7 +188,7 @@ const ProjectDashboard = () => {
                             ? 'bg-primary-500 border-primary-700'
                             : item.status === 'in-progress'
                             ? 'bg-yellow-300 border-yellow-500'
-                            : 'bg-white border-gray-400'
+                            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
                         } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
                         defaultChecked={item.status === 'done'}
                       />
@@ -232,12 +196,12 @@ const ProjectDashboard = () => {
                     <span className="truncate">{item.text}</span>
                   </span>
                   <span
-                    className={`mt-2 sm:mt-0 border border-gray-200 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
+                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
                       item.priority === 'high'
-                        ? 'bg-red-100 text-red-600'
+                        ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200'
                         : item.priority === 'medium'
-                        ? 'bg-yellow-100 text-yellow-600'
-                        : 'bg-green-100 text-green-600'
+                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
+                        : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
                     }`}
                   >
                     {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)}
@@ -248,28 +212,28 @@ const ProjectDashboard = () => {
           </div>
 
           {/* Projects - Adjusted Width */}
-          <div className="rounded-xl cursor-pointer bg-white p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] md:col-span-2 lg:col-span-2">
-            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black items-center">
+          <div className="rounded-xl cursor-pointer bg-white dark:bg-gray-800 dark:border-gray-700 p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] md:col-span-2 lg:col-span-2">
+            <h2 className="text-sm lg:text-lg font-semibold mb-4 flex text-base-black dark:text-white items-center">
               <span className="mr-2 bg-fuchsia-300 px-2 py-3 rounded"></span>
               {dashboardContent.projects.title}
             </h2>
-            <div className="space-y-3 flex flex-wrap px-2 text-sm text-text-sub overflow-y-auto max-h-[300px]">
+            <div className="space-y-3 flex flex-wrap px-2 text-sm text-text-sub dark:text-gray-300 overflow-y-auto max-h-[300px]">
               {dashboardContent.projects.items.map((item, index) => (
                 <div
                   key={`projects-${index}`}
-                  className="flex justify-between flex-col relative text-xs sm:text-sm hover:text-text-highlight transition-colors duration-200 border border-gray-200 rounded-lg px-3 py-2 w-full"
+                  className="flex justify-between flex-col relative text-xs sm:text-sm hover:text-text-highlight dark:hover:text-gray-100 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 w-full"
                 >
                   <a href={item.link} className="truncate font-medium">
                     {item.name}
                   </a>
-                  <span className="text-xs text-gray-500">{item.date}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{item.date}</span>
                   <span
-                    className={`mt-2 border border-gray-200 px-2 py-1 rounded-full text-xs flex-shrink-0 ${
-                      item.status === 'done'
-                        ? 'bg-primary-20 text-primary border-primary'
+                    className={`mt-2 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 ${
+                      item.status === 'done meat'
+                        ? 'bg-primary-20 text-primary border-primary dark:bg-primary-900 dark:text-primary-200 dark:border-primary-700'
                         : item.status === 'in-progress'
-                        ? 'bg-yellow-200 text-yellow-800 border-yellow-400'
-                        : 'bg-white text-text-sub border-text-sub'
+                        ? 'bg-yellow-200 text-yellow-800 border-yellow-400 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700'
+                        : 'bg-white text-text-sub border-text-sub dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
                     }`}
                   >
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}

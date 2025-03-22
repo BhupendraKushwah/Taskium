@@ -1,13 +1,17 @@
 import PropTypes from "prop-types";
+import "@phosphor-icons/web/light";
 import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
 import { NavLink } from "react-router";
 
-const Navbar = ({ handleSideNav }) => {
+const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const dropdownRef = useRef(null);
-
+  const toggleDarkTheme = () => {
+    const body = document.documentElement;
+    body.classList.toggle("dark");
+  }
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -23,10 +27,10 @@ const Navbar = ({ handleSideNav }) => {
   }, []);
 
   return (
-    <div className="w-full">
-      <nav className="navbar flex justify-between items-center p-4 bg-gray-50 shadow-md rounded-lg">
+    <div className="w-full bg-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700">
+      <nav className="navbar flex justify-between items-center p-4 shadow-md rounded-lg">
         <div className="sidebar-button cursor-pointer" onClick={handleSideNav}>
-          <i className="fu ph-fill ph-text-indent text-4xl text-teal-500"></i>
+          <i className={`fu ph-fill ph-text-${isSideNavOpen ? "outdent" : "indent"} text-4xl text-teal-500`}></i>
         </div>
         <div className="right-nav flex items-center gap-4">
           <div className="bell cursor-pointer">
@@ -47,28 +51,27 @@ const Navbar = ({ handleSideNav }) => {
               />
             </button>
             <div
-              className={`z-50 absolute right-0 mt-2 w-48 text-base list-none bg-gray-50 border border-gray-200 rounded-lg shadow-md transition-opacity duration-200 ${
-                isDropdownOpen ? "block opacity-100" : "hidden opacity-0"
-              }`}
+              className={`z-50 absolute right-0 mt-2 w-48 text-base list-none bg-gray-50 border border-gray-200 rounded-lg shadow-md transition-opacity duration-200 ${isDropdownOpen ? "block opacity-100" : "hidden opacity-0"
+                } dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400`}
             >
-              <div className="px-4 py-3 bg-teal-50 rounded-t-lg border-b-1 border-gray-200">
-                <span className="block text-sm font-semibold text-gray-900">Bonnie Green</span>
+              <div className="px-4 py-3 bg-teal-50 rounded-t-lg border-b-1 border-gray-200 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400">
+                <span className="block text-sm font-semibold text-gray-900 dark:text-teal-400">Bonnie Green</span>
                 <span className="block text-xs text-gray-500 truncate">name@flowbite.com</span>
               </div>
               <ul className="py-2">
-                <li className="flex justify-between items-center block px-4 py-2 text-sm text-gray-700 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200">
+                <li className="flex justify-between items-center block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200">
                   <a
                     className=""
                   >
                     Dark mode
                   </a>
                   <div>
-                  <Toggle size="sm" checked={isChecked} onChange={() => setIsChecked(!isChecked)} /></div>
+                    <Toggle size="sm" onChange={toggleDarkTheme} /></div>
                 </li>
                 <li>
                   <NavLink
                     to="/settings"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
                   >
                     Settings
                   </NavLink>
@@ -76,7 +79,7 @@ const Navbar = ({ handleSideNav }) => {
                 <li>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
                   >
                     Sign out
                   </a>

@@ -16,7 +16,7 @@ const AttendanceSheet = () => {
     if (!attendance[todayKey]) {
       setAttendance((prev) => ({ ...prev, [todayKey]: 'present' }));
     }
-  }, [attendance, setAttendance]);
+  }, [attendance]);
 
   const getStreak = () => {
     let streak = 0;
@@ -34,9 +34,9 @@ const AttendanceSheet = () => {
       calendar.push(
         <div
           key={`empty-${i}`}
-          className="p-1 sm:p-2 border border-gray-200 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8"
+          className="p-1 sm:p-2 border border-gray-200 dark:border-gray-700 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8 bg-gray-100 dark:bg-gray-800"
         >
-          <span className="text-[10px] sm:text-xs text-gray-400">-</span>
+          <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">-</span>
         </div>
       );
     }
@@ -46,8 +46,13 @@ const AttendanceSheet = () => {
       calendar.push(
         <div
           key={dateKey}
-          className={`p-1 sm:p-2 border border-gray-200 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8 ${status === 'present' ? 'bg-green-200' : status === 'partial' ? 'bg-yellow-200' : 'bg-gray-200'
-            } ${dateKey === today.toISOString().split('T')[0] ? 'border-2 border-teal-500' : ''}`}
+          className={`p-1 sm:p-2 border border-gray-200 dark:border-gray-700 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8 ${
+            status === 'present'
+              ? 'bg-green-200 dark:bg-green-700 dark:text-white'
+              : status === 'partial'
+              ? 'bg-yellow-200 dark:bg-yellow-700 dark:text-white'
+              : 'bg-gray-200 dark:bg-gray-600 dark:text-gray-300'
+          } ${dateKey === today.toISOString().split('T')[0] ? 'border-2 border-teal-500 dark:border-teal-400' : ''}`}
         >
           <span className="text-[10px] sm:text-xs">{day}</span>
         </div>
@@ -57,9 +62,9 @@ const AttendanceSheet = () => {
   };
 
   return (
-    <div className="rounded-xl bg-white p-4 sm:p-6 w-full shadow-xl hover:shadow-2xl hover:bg-hover-color transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] flex flex-col">
+    <div className="rounded-xl bg-white dark:bg-gray-800 dark:border-gray-700 p-4 sm:p-6 w-full shadow-xl hover:shadow-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] flex flex-col">
       <div className="mb-2 sm:mb-4 flex items-center">
-        <h5 className="text-sm lg:text-lg font-semibold text-base-black flex items-center">
+        <h5 className="text-sm lg:text-lg font-semibold text-base-black dark:text-white flex items-center">
           <span className="mr-2 bg-teal-300 px-1 py-2 sm:px-2 sm:py-3 rounded"></span>
           {months[month]}-{year}
         </h5>
@@ -68,16 +73,18 @@ const AttendanceSheet = () => {
         {days.map((day, index) => (
           <div
             key={index}
-            className="p-1 sm:p-2 border border-gray-200 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8"
+            className="p-1 sm:p-2 border border-gray-200 dark:border-gray-700 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8 bg-gray-50 dark:bg-gray-700"
           >
-            <span className="text-[10px] sm:text-xs font-semibold text-gray-600 truncate">{day}</span>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-300 truncate">
+              {day}
+            </span>
           </div>
         ))}
         {renderCalendar()}
       </div>
       <div className="mt-2 sm:mt-4 flex flex-col sm:flex-row gap-2 sm:gap-4">
         {/* Streak Badge */}
-        <div className="flex items-center justify-center px-3 py-1 bg-gradient-to-r from-teal-300 to-teal-500 rounded-full shadow-md hover:scale-105 transition-transform duration-200">
+        <div className="flex items-center justify-center px-3 py-1 bg-gradient-to-r from-teal-300 to-teal-500 dark:from-teal-600 dark:to-teal-800 rounded-full shadow-md hover:scale-105 transition-transform duration-200">
           <span className="text-xs sm:text-sm text-white font-semibold flex items-center">
             <svg
               className="w-4 h-4 mr-1"
@@ -98,7 +105,7 @@ const AttendanceSheet = () => {
         </div>
 
         {/* Attendance Badge */}
-        <div className="flex items-center justify-center px-3 py-1 bg-gradient-to-r from-green-300 to-green-500 rounded-full shadow-md hover:scale-105 transition-transform duration-200">
+        <div className="flex items-center justify-center px-3 py-1 bg-gradient-to-r from-green-300 to-green-500 dark:from-green-600 dark:to-green-800 rounded-full shadow-md hover:scale-105 transition-transform duration-200">
           <span className="text-xs sm:text-sm text-white font-semibold flex items-center">
             <svg
               className="w-4 h-4 mr-1"

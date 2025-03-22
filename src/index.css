@@ -1,5 +1,6 @@
 @import './App.css';
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-navbar: #262D38 !important;

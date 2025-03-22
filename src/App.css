@@ -113,7 +113,6 @@
 h4 {
   margin: 0;
   padding: 0;
-  color: var(--base-black);
   font-weight: 400;
 }
 
@@ -197,7 +196,7 @@ h4 {
   top: 64px;
   /* Adjust based on your Navbar's height */
   left: 0;
-  z-index: 9999;
+  z-index: 99;
   height: 100vh;
   /* width: 16rem; */
   /* Sidebar width when open */
@@ -298,12 +297,69 @@ polyline {
 :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
   border: #009966 solid 1px;
   border-radius:50% ;
-  background-color: #c7f0e2a4;
+  background-color: #c7f0e2a4 !important;
   padding: 10px;
 }
 
 .ant-picker{
   padding: 7px;
+}
+/* Base TimePicker styles in dark mode */
+.dark .ant-picker {
+  background: #374151 !important; /* gray-700 */
+  color: #ffffff !important; /* white */
+  border-color: #4b5563 !important; /* gray-600 */
+}
+
+.dark .ant-picker-input > input {
+  color: #ffffff !important; /* white */
+}
+
+.dark .ant-picker-suffix {
+  color: #9ca3af !important; /* gray-400 */
+}
+
+/* Dropdown styles */
+.dark .ant-picker-dropdown {
+  background: #000000 !important; /* black, as per your CSS */
+  color: #ffffff !important; /* white text for readability */
+  border: 1px solid #4b5563 !important; /* gray-600 border */
+}
+
+.dark .ant-picker-panel-container {
+  background: #000000 !important; /* match dropdown background */
+  color: #ffffff !important;
+}
+
+.dark .ant-picker-panel {
+  background: #000000 !important;
+  border-color: #4b5563 !important; /* gray-600 */
+}
+
+.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner {
+  color: #ffffff !important; /* white text in time options */
+}
+
+.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background: #1f7661 !important; /* teal-600 for selected option */
+  color: #ffffff !important;
+}
+
+.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner:hover {
+  background: #4b5563 !important; /* gray-600 for hover */
+}
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-content th {
+  color: rgba(255, 255, 255, 0.88); /* White with 88% opacity for dark mode */
+}
+
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-content tr {
+  color: rgba(255, 255, 255, 0.88); /* White with 88% opacity for dark mode */
+}
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view{
+  color: rgba(255, 255, 255, 0.88) !important; /* White with 88% opacity for dark mode */
+}
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell{
+  color: rgba(179, 175, 175, 0.823);
 }
 /* Custom focus and hover styles */
 .ant-picker:hover,
@@ -363,6 +419,9 @@ input::placeholder {
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
+}
+.dark .ant-picker-input input::placeholder {
+  color: rgba(179, 179, 179, 0.774); /* Equivalent to Tailwind's gray-500 */
 }
 
 .no-scroll {

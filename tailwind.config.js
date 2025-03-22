@@ -2,6 +2,7 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'], // Important: Paths to your components
   important: '#root',
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
