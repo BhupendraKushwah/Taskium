@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { use } from 'react';
 import { Pie } from 'react-chartjs-2'
+import { useTheme } from '../../context/ThemeContext/ThemeContext';
 
 const PieChart = ({ dashboardContent }) => {
     const [taskStats, setTaskStats] = useState({});
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const { theme } = useTheme();
     const pieData = {
         labels: ['Done', 'In Progress', 'Pending'],
         datasets: [
@@ -21,7 +22,7 @@ const PieChart = ({ dashboardContent }) => {
         plugins: {
             legend: {
                 position: 'bottom',
-                labels: { color: isDarkMode ? '#d1d5dc' : 'hsl(216, 15%, 9%)', font: { size: 14 } },
+                labels: { color: theme !== 'light' ? '#d1d5dc' : 'hsl(216, 15%, 9%)', font: { size: 14 } },
             },
             tooltip: {
                 backgroundColor: 'hsl(223, 7%, 18%)',
@@ -44,23 +45,6 @@ const PieChart = ({ dashboardContent }) => {
         setTaskStats(calculateTaskStats())
     }, [dashboardContent])
 
-    useEffect(()=>{
-        const checkDarkMode = () => {
-            setIsDarkMode(document.documentElement.classList.contains('dark'));
-        };
-
-        // Initial check
-        checkDarkMode(); 
-
-        let observer = new MutationObserver(checkDarkMode);
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['class'],
-        });
-
-        // Cleanup observer on unmount
-        return ()=> observer.disconnect();
-    })
 
     return <Pie data={pieData} options={pieOptions} />
 }

@@ -9,6 +9,7 @@ import ProjectContextProvider from './context/ProjectContext/ProjectContextProvi
 import Tasks from './page/Tasks';
 import TaskContextProvider from './context/TaskContext/TaskContextProvider';
 import Setting from './page/Setting';
+import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
 
 
 function App() {
@@ -16,17 +17,19 @@ function App() {
   return (
     <ProjectContextProvider>
       <TaskContextProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route path="" element={<DashboardContent />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/settings" element={<Setting />} />
-            <Route path='*' element={<NotFound />} />
-          </Route >
-        </Routes>
-      </BrowserRouter>
+        <ThemeContextProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/' element={<Layout />}>
+                <Route path="" element={<DashboardContent />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/settings" element={<Setting />} />
+                <Route path='*' element={<NotFound />} />
+              </Route >
+            </Routes>
+          </BrowserRouter>
+        </ThemeContextProvider>
       </TaskContextProvider>
     </ProjectContextProvider>
   );

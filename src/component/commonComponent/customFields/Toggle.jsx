@@ -32,15 +32,14 @@ const Toggle = ({ checked, onChange, disabled = false, size = 'md' }) => {
       <input
         type="checkbox"
         className="sr-only peer"
-        checked={checked}
+        defaultChecked={checked}
         onChange={onChange}
         disabled={disabled}
       />
       {/* Track */}
       <div
-        className={`${selectedSize.track} rounded-full bg-gray-200 peer-checked:bg-teal-500 transition-colors duration-300 ease-in-out ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'peer-focus:ring-2 peer-focus:ring-teal-300'
-        }`}
+        className={`${selectedSize.track} rounded-full bg-gray-200 peer-checked:bg-teal-500 transition-colors duration-300 ease-in-out ${disabled ? 'opacity-50 cursor-not-allowed' : 'peer-focus:ring-2 peer-focus:ring-teal-300'
+          }`}
       ></div>
       {/* Thumb */}
       <span
@@ -58,11 +57,6 @@ Toggle.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
-};
-
-Toggle.defaultProps = {
-  disabled: false,
-  size: 'md',
 };
 
 export default Toggle;

@@ -128,11 +128,11 @@ const ProjectForm = ({ onClose, onSubmit }) => {
 
     return (
         <div className="w-full h-full fixed top-18 left-0 bg-[#0000004d] dark:bg-[#00000080] flex justify-end z-50">
-            <div className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/4 h-[calc(100vh-72px)] bg-white dark:bg-gray-800 shadow-lg p-5 overflow-y-auto dark:border-gray-700">
+            <div className="w-3/4 sm:w-1/2 md:w-1/2 lg:w-1/3 h-[calc(100vh-72px)] bg-white dark:bg-gray-800 shadow-lg p-5 overflow-y-auto dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-2 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="cursor-pointer text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
+                        className="cursor-pointer text-gray-600 dark:text-gray-700 hover:text-black dark:hover:text-white"
                     >
                         <i className="ph ph-arrow-line-right text-xl"></i>
                     </button>
@@ -183,7 +183,7 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                                 onClick={addTeamMember}
                                 bgColor="bg-white dark:bg-gray-700"
                                 textColor="text-teal-600 dark:text-teal-300"
-                                className="mt-2 border border-teal-600 dark:border-teal-300 rounded px-1 cursor-pointer hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white dark:hover:text-white transition duration-300"
+                                className="mt-2 border-1 border-teal-600 dark:border-teal-300 rounded px-1 cursor-pointer hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white dark:hover:text-white transition duration-300"
                             >
                                 <i className="ph ph-plus text-sm"></i>
                             </Button>
@@ -194,7 +194,7 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                                     options={teamDesignation}
                                     placeholder="Role"
                                     onChange={(e) => handleTeamChange(index, "role", e.value)}
-                                    className="w-1/2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500 z-[1]"
+                                    className="w-1/2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
                                 />
                                 <Input
                                     type="text"
@@ -209,7 +209,7 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                                         onClick={() => removeTeamMember(index)}
                                         bgColor="bg-white dark:bg-gray-700"
                                         textColor="text-red-500 dark:text-red-400"
-                                        className="p-1 rounded border border-red-500 dark:border-red-400 cursor-pointer hover:bg-red-500 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition duration-300"
+                                        className="p-1 rounded border-1 border-red-500 dark:border-red-400 cursor-pointer hover:bg-red-500 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition duration-300"
                                     >
                                         <i className="ph ph-trash text-sm"></i>
                                     </Button>

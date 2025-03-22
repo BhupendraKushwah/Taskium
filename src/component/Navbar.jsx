@@ -3,15 +3,13 @@ import "@phosphor-icons/web/light";
 import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
 import { NavLink } from "react-router";
+import { useTheme } from "../context/ThemeContext/ThemeContext";
 
 const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const dropdownRef = useRef(null);
-  const toggleDarkTheme = () => {
-    const body = document.documentElement;
-    body.classList.toggle("dark");
-  }
+  const { theme, toggleTheme } = useTheme();
+
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -66,7 +64,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
                     Dark mode
                   </a>
                   <div>
-                    <Toggle size="sm" onChange={toggleDarkTheme} /></div>
+                    <Toggle size="sm" checked={theme === "dark"} onChange={toggleTheme} /></div>
                 </li>
                 <li>
                   <NavLink

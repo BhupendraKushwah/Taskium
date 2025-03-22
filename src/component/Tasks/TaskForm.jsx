@@ -35,7 +35,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
             [project.name, { label: project.name, value: project._id }]
         )).values()
     );
-      
+
     const taskType = [
         { label: "Bug", value: "Bug" },
         { label: "Feature", value: "Feature" },
@@ -61,7 +61,7 @@ const TaskForm = ({ task, onClose, onSubmit }) => {
         <div className="w-full h-full fixed top-18 left-0 bg-[#0000004d] dark:bg-[#00000080] flex justify-end z-50">
             <div className="w-3/4 sm:w-3/4 md:w-3/4 lg:w-1/2 h-[calc(100vh-72px)] bg-white dark:bg-gray-800 shadow-lg p-5 overflow-y-auto dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-2 flex justify-end">
-                    <button onClick={onClose} className="cursor-pointer text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
+                    <button onClick={onClose} className="cursor-pointer text-gray-600 dark:text-gray-700 hover:text-black dark:hover:text-white">
                         <i className="ph ph-arrow-line-right text-xl"></i>
                     </button>
                 </div>

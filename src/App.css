@@ -72,27 +72,52 @@
   }
 }
 
+/* Light Theme (Default) */
 ::-webkit-scrollbar-track {
   background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); /* Soft gray gradient */
-  border-radius: 12px; /* Larger radius for modern look */
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05); /* Subtle depth */
+  border-radius: 12px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #99f6e4, #2dd4bf); /* Soft teal gradient */
-  border-radius: 12px; /* Pill shape */
-  background-clip: padding-box; /* Clean edges */
-  border: 2px solid transparent; /* Adds padding effect */
+  border-radius: 12px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #99f6e4, #0d9488); /* Deeper teal on hover */
-  transform: scale(1.05); /* Slight pop */
+  transform: scale(1.05);
 }
 
 ::-webkit-scrollbar-thumb:active {
   background: linear-gradient(135deg, #5eead4, #0d9488); /* Even deeper when clicked */
+}
+
+/* Dark Theme */
+.dark ::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #1f2937, #374151); /* Dark gray gradient (gray-800 to gray-700) */
+  border-radius: 12px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); /* Slightly deeper shadow for dark mode */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #5eead4, #0d9488); /* Darker teal gradient (teal-300 to teal-700) */
+  border-radius: 12px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #99f6e4, #0d9488); /* Lighter teal to deep teal on hover */
+  transform: scale(1.05);
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #2dd4bf, #0d9488); /* Mid-teal to deepest teal when clicked */
 }
 
 /* Firefox fallback */
@@ -252,6 +277,39 @@ h4 {
 .ts-input-search:focus {
   outline-color: var(--primary);
   color: var(--text-placeholder);
+}
+
+.dark .ts-input-search:focus {
+  outline-color: oklch(0.704 0.14 182.503);
+  color: var(--text-placeholder);
+  box-shadow: 0 0 3px #009966;
+}
+
+.dark .ts-input-search{
+  background: oklch(0.373 0.034 259.733);
+  color: #fff !important;
+  border-radius: 5px;
+  outline: 1px solid oklch(0.62 0 0);
+}
+
+.ts-input-search:disabled {
+  background: #f3f4f6; /* gray-100 equivalent */
+  color: #6b7280; /* gray-500 for contrast */
+  border-radius: 5px;
+  outline: 1px solid #e5e7eb; /* gray-200 */
+}
+/* Dark Theme Disabled State */
+.dark .ts-input-search:disabled {
+  background: oklch(0.573 0.034 259.933); /* Your dark background */
+  color: #ffffff; /* White text */
+  border-radius: 5px;
+  outline: 1px solid oklch(0.62 0 0); /* Your gray outline */
+}
+
+.dark .x-btn{
+  background: oklch(0.373 0.034 259.733);
+  color: #fff !important;
+  border-left:1px solid #606060;
 }
 
 @media (max-width: 425px) {
