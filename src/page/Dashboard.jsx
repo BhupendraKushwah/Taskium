@@ -119,7 +119,7 @@ const ProjectDashboard = () => {
                   }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
-                    <span className="relative inline-block">
+                    <span className="relative inline-block custom-ui-checkbox">
                       <input
                         onClick={() => handleStatusChange(item.id, 'todayTasks')}
                         type="checkbox"
@@ -179,7 +179,7 @@ const ProjectDashboard = () => {
                   }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
-                    <span className="relative inline-block">
+                    <span className="relative inline-block custom-ui-checkbox">
                       <input
                         onClick={() => handleStatusChange(item.id, 'pendingTasks')}
                         type="checkbox"

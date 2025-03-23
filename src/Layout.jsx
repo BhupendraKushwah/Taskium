@@ -1,13 +1,22 @@
-import { useState } from 'react';
-import { Outlet } from "react-router";
+import { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from "react-router";
 import Navbar from "./component/Navbar";
 import SideNav from "./component/SideNav";
 
 const Layout = () => {
+    const navigate = useNavigate();
     const [isSideNavOpen, setIsSideNavOpen] = useState(false);
     const toggleSideNav = () => {
         setIsSideNavOpen((prev) => !prev);
     };
+
+    // useEffect(() => {
+    //     const publicPaths = ['/login', '/signup', '/forgot-password'];
+    
+    //     if (!localStorage.getItem('user') && !publicPaths.includes(window.location.pathname)) {
+    //         navigate('/login');
+    //     }
+    // }, [navigate]);
 
     return (
         <>

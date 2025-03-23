@@ -497,7 +497,7 @@ input::placeholder {
   overflow-y: auto; 
 }
 
-input[type="checkbox"]:checked:after {
+.custom-ui-checkbox input[type="checkbox"]:checked:after {
   content: "";
   position: absolute;
   top: 50%;

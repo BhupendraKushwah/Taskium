@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import "@phosphor-icons/web/light";
 import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
 import { NavLink } from "react-router";

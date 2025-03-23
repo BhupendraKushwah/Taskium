@@ -10,6 +10,9 @@ import Tasks from './page/Tasks';
 import TaskContextProvider from './context/TaskContext/TaskContextProvider';
 import Setting from './page/Setting';
 import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
+import Login from './page/Login';
+import SignUp from './page/SignUp';
+import ForgotPassword from './page/ForgotPassword';
 
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
                 <Route path="/settings" element={<Setting />} />
                 <Route path='*' element={<NotFound />} />
               </Route >
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password/:token?" element={<ForgotPassword />} />
             </Routes>
           </BrowserRouter>
         </ThemeContextProvider>
