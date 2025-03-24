@@ -52,7 +52,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
                 } dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400`}
             >
               <div className="px-4 py-3 bg-teal-50 rounded-t-lg border-b-1 border-gray-200 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400">
-                <span className="block text-sm font-semibold text-gray-900 dark:text-teal-400">Bonnie Green</span>
+                <NavLink to='profile/2' className="block text-sm font-semibold text-gray-900 dark:text-teal-400">Bonnie Green</NavLink>
                 <span className="block text-xs text-gray-500 truncate">name@flowbite.com</span>
               </div>
               <ul className="py-2">

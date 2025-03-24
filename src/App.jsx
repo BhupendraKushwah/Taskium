@@ -13,6 +13,7 @@ import ThemeContextProvider from './context/ThemeContext/ThemeContextProvider';
 import Login from './page/Login';
 import SignUp from './page/SignUp';
 import ForgotPassword from './page/ForgotPassword';
+import UserProfile from './page/UserProfile';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Routes>
               <Route path='/' element={<Layout />}>
                 <Route path="" element={<DashboardContent />} />
+                <Route path="/profile/:id" element={<UserProfile />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/tasks" element={<Tasks />} />
                 <Route path="/settings" element={<Setting />} />
