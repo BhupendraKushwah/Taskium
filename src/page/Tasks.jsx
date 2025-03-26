@@ -182,26 +182,37 @@ const Tasks = () => {
     }, [])
 
     return (
-        <div className="overflow-hidden">
-            <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white p-2 rounded">
-                <h3 className="text-lg">Tasks</h3>
+        <div className="overflow-hidden dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800">
+            <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white dark:bg-gray-800 p-2 rounded dark:border-gray-700">
+                <h3 className="text-lg text-gray-900 dark:text-white">Tasks</h3>
                 <div className="content-head-right flex items-center">
-                    <Button bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setCustomColumnsOpen(true)}>
+                    <Button
+                        bgColor='bg-primary-10 dark:bg-gray-800'
+                        textColor='text-primary'
+                        className="ml-2 bg-opacity-0 hover:bg-primary-20 dark:hover:bg-gray-700 border-primary dark:border-gray-600 border-1 transition-300 text-teal-600 dark:text-teal-300"
+                        handleClick={() => setCustomColumnsOpen(true)}
+                    >
                         <i className='ph ph-faders-horizontal'></i>
                     </Button>
-                    <Button bgColor='bg-primary-10' textColor='text-primary' className="ml-2 bg-opacity-0 hover:bg-primary-20 border-primary border-1 transition-300" handleClick={() => setTaskForm({ open: true, id: null })}>
+                    <Button
+                        bgColor='bg-primary-10 dark:bg-gray-800'
+                        textColor='text-primary'
+                        className="ml-2 bg-opacity-0 hover:bg-primary-20 dark:hover:bg-gray-700 border-primary dark:border-gray-600 border-1 transition-300 text-teal-600 dark:text-teal-300"
+                        handleClick={() => setTaskForm({ open: true, id: null })}
+                    >
                         <i className="ph ph-plus"></i>
                     </Button>
                 </div>
             </div>
-            <div className="bg-white p-3 rounded page overflow-x-auto">
+            <div className="bg-white dark:bg-gray-800 p-3 rounded page overflow-x-auto dark:border-gray-700">
                 <Table customColumns={customColumns} />
             </div>
-            {taskForm.open
-                && <TaskForm taskId={taskForm.id} onClose={() => setTaskForm({ open: false, id: null })} onSubmit={handleSubmit} />}
-            {customColumnsOpen && <CustomColumn columns={customColumns} setCustomColumns={setCustomColumns} onClose={() => setCustomColumnsOpen(false)} />
-
-            }
+            {taskForm.open && (
+                <TaskForm taskId={taskForm.id} onClose={() => setTaskForm({ open: false, id: null })} onSubmit={handleSubmit} />
+            )}
+            {customColumnsOpen && (
+                <CustomColumn columns={customColumns} setCustomColumns={setCustomColumns} onClose={() => setCustomColumnsOpen(false)} />
+            )}
         </div>
     )
 }

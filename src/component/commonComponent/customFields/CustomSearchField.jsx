@@ -14,7 +14,7 @@ const CustomSearchField = ({
         <div className={` ${className} flex relative input-search`}>
             <i className="ph ph-magnifying-glass search-icon"></i>
             <input
-                className={`ts-input-search ${InputWidth} fu-search-marg`}
+                className={`ts-input-search ${InputWidth} fu-search-marg dark:border-gray-600 dark:bg-gray-700 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-200 disabled:cursor-not-allowed`}
                 type={type}
                 value={value}
                 placeholder={placeholder}
