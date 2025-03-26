@@ -19,6 +19,7 @@ const Input = ({
                     hover:outline-none hover:border-primary hover:shadow-[0_0_3px_#009966] 
                     font-normal
                     transition duration-300 
+                    disabled:bg-gray-800
                     !text-gray-500 dark:!text-white
                     ${className}`}
                 {...props}

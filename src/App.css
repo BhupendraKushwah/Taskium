@@ -508,3 +508,26 @@ input::placeholder {
   border: solid #414141;
   border-width: 0 2px 2px 0;
 }
+
+
+ .ant-modal-content {
+  background-color: #fff; /* Light mode default */
+}
+
+.dark  .ant-modal-content {
+  background-color: #1f2937; /* gray-800 for dark mode */
+}
+
+.dark  .ant-modal-header {
+  background-color: #1f2937; /* gray-800 */
+  border-bottom: 1px solid #374151; /* gray-700 */
+}
+
+.dark  .ant-modal-footer {
+  background-color: #1f2937; /* gray-800 */
+  border-top: 1px solid #374151; /* gray-700 */
+}
+
+.dark  .ant-modal-close-x {
+  color: #d1d5db; /* gray-300 */
+}

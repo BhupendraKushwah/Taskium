@@ -3,20 +3,31 @@ import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
 import { NavLink } from "react-router";
 import { useTheme } from "../context/ThemeContext/ThemeContext";
+import Notification from "./Notification";
 
 const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
+  const toggleNotification = () => {
+    setIsNotificationOpen((prev) => !prev);
+  };
+
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setIsNotificationOpen(false);
       }
     };
     document.addEventListener("mousedown", handleOutsideClick);
@@ -30,8 +41,13 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
           <i className={`fu ph-fill ph-text-${isSideNavOpen ? "outdent" : "indent"} text-4xl text-teal-500`}></i>
         </div>
         <div className="right-nav flex items-center gap-4">
-          <div className="bell cursor-pointer">
-            <i className="fu ph-fill ph-bell text-2xl text-gray-600 hover:text-teal-500 transition-colors duration-200"></i>
+          <div className="bell cursor-pointer" ref={notificationRef}>
+            <span className="relative" onClick={toggleNotification}>
+              <i className={`fu ph-fill ph-bell text-2xl text-gray-600 hover:text-teal-500 ${isNotificationOpen ? "text-teal-500" : ""} transition-colors duration-200`}></i>
+            </span>
+            {isNotificationOpen && <div className="absolute z-[9999] right-4">
+              <Notification />
+            </div>}
           </div>
           <div className="user-pic relative" ref={dropdownRef}>
             <button
