@@ -17,11 +17,6 @@ const Projects = () => {
             { name: "John Doe", role: "Designer" },
             { name: "Jane Smith", role: "Developer" }
         ],
-        tasks: [
-            { name: "Create wireframes", completed: true },
-            { name: "Develop homepage", completed: false },
-            { name: "Test responsiveness", completed: false }
-        ],
         startDate: "2025-01-01",
         dueDate: "2025-02-01"
     }));

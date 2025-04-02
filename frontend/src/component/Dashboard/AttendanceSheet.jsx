@@ -21,6 +21,9 @@ const AttendanceSheet = () => {
   const getStreak = () => {
     let streak = 0;
     const sortedDates = Object.keys(attendance).sort();
+    console.log('sortedDates:', sortedDates);
+    console.log('attendance:', attendance);
+    
     for (let i = sortedDates.length - 1; i >= 0; i--) {
       if (attendance[sortedDates[i]] === 'present') streak++;
       else break;
