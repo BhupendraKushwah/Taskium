@@ -14,7 +14,7 @@ const createTaskTable = async () => {
                         projectId INT,
                         status Varchar(255),
                         startDate DATETIME,
-                        type VARARCHAR(255),
+                        type VARCHAR(255),
                         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                         FOREIGN KEY (assignee) REFERENCES users(id) ON DELETE CASCADE,

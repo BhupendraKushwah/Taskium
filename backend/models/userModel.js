@@ -9,12 +9,16 @@ const createUserTable = async () => {
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) UNIQUE NOT NULL,
+                username VARCHAR(255) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 gender ENUM('Male', 'Female', 'Other'),
                 phone VARCHAR(20),
                 address TEXT,
                 residence VARCHAR(255),
                 dob DATE,
+                passwordResetToken VARCHAR(255) Default NULL,
+                image VARCHAR(255) Default NULL,
+	            fcm_token VARCHAR(255) NULL,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         )`
         await pool.query(query);
@@ -135,20 +139,16 @@ const insertDeviceLogin = async (data) => {
 
 const insertUser = async (data) => {
     try {
-        const { name, email, password, gender, phone, address, residence, dob } = data;
+        const { name, email, password, gender, phone, address, residence, dob, image, username } = data;
         if (!name) throw new Error('Name is required');
         if (!email) throw new Error('Email is required');
         if (!password) throw new Error('Password is required');
-        if (!gender) throw new Error('Gender is required');
         if (!phone) throw new Error('Phone is required');
-        if (!address) throw new Error('Address is required');
-        if (!residence) throw new Error('Residence address is required');
-        if (!dob) throw new Error('Date of birth is required');
-
+        if (!username) throw new Error('Username is required');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const query = `INSERT INTO users (name, email, password, gender, phone, address, residence, dob) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        const values = [name, email, hashedPassword, gender, phone, address, residence, dob];
+        const query = `INSERT INTO users (name, email, password, gender, phone, address, residence, dob,image,username) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)`;
+        const values = [name, email, hashedPassword, gender, phone, address, residence, dob, image, username];
         const [result] = await pool.query(query, values);
         return {
             success: true,
@@ -192,8 +192,8 @@ const insertSocial = async (data) => {
 
 const updateUser = async (data) => {
     try {
-        const { id, name, email, gender, phone, address, residence, dob } = data;
-        const query = `UPDATE users SET name = ?, email = ?, gender = ?, phone = ?, address = ?, residence = ?, dob = ? WHERE id = ?`;
+        const { id, name, email, gender, phone, address, residence, dob, image, fcm_token = null } = data;
+        const query = `UPDATE users SET name = ?, email = ?, gender = ?, phone = ?, address = ?, residence = ?, dob = ? image=? WHERE id = ?`;
         const values = [name, email, gender, phone, address, residence, dob, id];
         const [result] = await pool.query(query, values);
         return result;
@@ -381,6 +381,92 @@ const checkEmailExists = async (email) => {
     }
 };
 
+const checkUsernameExists = async (username) => {
+    try {
+        const query = `SELECT COUNT(*) as count FROM users WHERE username = ?`;
+        const values = [username];
+        const [result] = await pool.query(query, values);
+        return result[0].count > 0;
+    } catch (error) {
+        logger.Error(error, { filepath: '/models/userModel.js', function: 'checkEmailExists' });
+        console.log(error);
+        throw error;
+    }
+};
+
+const getTableFields = async (tableName, fields = [], options = {}) => {
+    try {
+        // Validate inputs
+        if (!tableName) {
+            throw new Error('Table name is required');
+        }
+
+        // Whitelist of allowed tables to prevent SQL injection
+        const allowedTables = ['users', 'professions', 'social', 'user_device_logins'];
+        if (!allowedTables.includes(tableName.toLowerCase())) {
+            throw new Error('Invalid table name');
+        }
+
+        const {
+            where = {},
+            limit = 50,
+            offset = 0,
+            sortBy = 'createdAt',
+            sortOrder = 'DESC'
+        } = options;
+
+        // If no fields specified, get all columns safely
+        let columns = '*';
+        if (fields.length > 0) {
+            // Validate and sanitize fields
+            const sanitizedFields = fields.map(field =>
+                field.replace(/[^a-zA-Z0-9_]/g, '') // Basic sanitization
+            ).filter(field => field.length > 0);
+
+            if (sanitizedFields.length === 0) {
+                throw new Error('Invalid field names provided');
+            }
+            columns = sanitizedFields.join(', ');
+        }
+
+        // Build the query
+        let query = `SELECT ${columns} FROM ${tableName}`;
+        const queryParams = [];
+
+        // Add WHERE conditions
+        if (Object.keys(where).length > 0) {
+            query += ' WHERE ';
+            const conditions = Object.entries(where).map(([key, value]) => {
+                queryParams.push(value);
+                return `${key.replace(/[^a-zA-Z0-9_]/g, '')} = ?`;
+            });
+            query += conditions.join(' AND ');
+        }
+
+        // Add sorting
+        const sortField = sortBy.replace(/[^a-zA-Z0-9_]/g, '');
+        const order = sortOrder.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+        query += ` ORDER BY ${sortField} ${order}`;
+
+        // Add pagination
+        query += ` LIMIT ? OFFSET ?`;
+        queryParams.push(parseInt(limit), parseInt(offset));
+
+        const [result] = await pool.query(query, queryParams);
+
+        return {
+            success: true,
+            data: result,
+            count: result.length,
+            table: tableName,
+            fields: fields.length > 0 ? fields : 'all',
+            filters: where
+        };
+    } catch (error) {
+        logger.Error(error, { filepath: '/models/userModel.js', function: 'getTableFields' });
+        throw new Error(`Failed to retrieve data from ${tableName}: ${error.message}`);
+    }
+};
 
 export {
     createUserTable,
@@ -402,5 +488,9 @@ export {
     getProfessions,
     getSocials,
     getUserDetails,
-    checkEmailExists
+    checkEmailExists,
+    checkUsernameExists,
+    createUserDeviceLoginTable,
+    getTableFields,
+    insertDeviceLogin,
 }

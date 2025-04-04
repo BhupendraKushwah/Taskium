@@ -126,3 +126,9 @@ const insertUserAttendance = async (data) => {
         throw error;
     }
 };
+
+export {
+    createAttendanceTable,
+    getUserAttendance,
+    insertUserAttendance
+}

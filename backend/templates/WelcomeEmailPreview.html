@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Welcome to Taskium</title>
+    <style>
+        /* Reset styles */
+        body { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+        a { color: #2dd4bf; text-decoration: none; }
+        table { border-collapse: collapse; }
+
+        /* Container */
+        .container { max-width: 600px; width: 100%; margin: 0 auto; background: #ffffff; }
+
+        /* Header */
+        .header { background: #2dd4bf; padding: 20px; text-align: center; color: #ffffff; }
+        .header h1 { font-size: 24px; margin: 0; }
+
+        /* Content */
+        .content { padding: 30px; color: #333333; }
+        .content h2 { font-size: 20px; margin-top: 0; }
+        .content p { font-size: 16px; line-height: 1.5; }
+        .button { display: inline-block; padding: 12px 24px; background: #2dd4bf; color: #ffffff !important; border-radius: 5px; text-align: center; }
+
+        /* Footer */
+        .footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666666; }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .container { width: 100%; }
+            .content { padding: 20px; }
+            .button { display: block; width: 100%; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+    <table class="container" cellpadding="0" cellspacing="0">
+        <!-- Header -->
+        <tr>
+            <td class="header">
+                <h1>Welcome to Taskium!</h1>
+            </td>
+        </tr>
+        <!-- Content -->
+        <tr>
+            <td class="content">
+                <h2>Hello [USER_NAME],</h2>
+                <p>
+                    Thanks for joining Taskium! We’re excited to have you on board.
+                    Our platform is designed to help you manage tasks efficiently
+                    and stay organized.
+                </p>
+                <p>
+                    Get started by exploring your dashboard or reaching out to our
+                    support team if you need assistance.
+                </p>
+                <a href="http://localhost:5173/" class="button">Visit Dashboard</a>
+            </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+            <td class="footer">
+                <p>Taskium</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
