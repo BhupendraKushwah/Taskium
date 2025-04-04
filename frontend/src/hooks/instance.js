@@ -32,19 +32,19 @@ axiosInstance.interceptors.response.use(
       message: error.message || 'An unexpected error occurred',
       details: error.response?.data,
     };
-    Promise.reject(errorResponse);
+    return Promise.reject(errorResponse);
   }
 )
 
 //create request function
 
-const createRequest = async (method, baseURL, responseType = 'json') => {
+function createRequest (method, baseUrl, responseType = 'json') {
   return async (url, data = {}, options = {}) => {
 
     const isParamsMethod = method == 'get' || method == 'delete';
     const { status, error, ...configOptions } = options;
     const requestConfig = {
-      url: `${baseURL}${url}`,
+      url: `${baseUrl}${url}`,
       method,
       responseType,
       ...configOptions,
@@ -67,16 +67,16 @@ const createRequest = async (method, baseURL, responseType = 'json') => {
     }
     catch (error) {
       const errorResponse = {
-        status: err.status || 500,
-        message: err.message || 'Request failed',
-        details: err.details,
+        status: error.status || 500,
+        message: error.message || 'Request failed',
+        details: error.details,
       };
       throw errorResponse;
     }
   }
 }
 
-export default function useApi(baseUrl = '/') {
+export default function useApi(baseUrl = '/api') {
   return {
     get: createRequest('get', baseUrl),
     post: createRequest('post', baseUrl),

@@ -13,7 +13,7 @@ const Layout = () => {
     useEffect(() => {
         const publicPaths = ['/login', '/signup', '/forgot-password'];
 
-        if (!localStorage.getItem('user') && !publicPaths.includes(window.location.pathname)) {
+        if (!localStorage.getItem('persistantState') && !publicPaths.includes(window.location.pathname)) {
             navigate('/login');
         }
     }, [navigate]);

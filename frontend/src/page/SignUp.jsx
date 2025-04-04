@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Input } from '../component/commonComponent/customFields';
 import { useForm } from 'react-hook-form';
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+import useApi  from "../hooks/instance";
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
   const {
@@ -18,15 +20,18 @@ const SignUp = () => {
       rememberMe: false
     }
   });
-
+  const api = useApi();
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const onFormSubmit = async (data) => {
     try {
-      console.log('Sign up submitted:', data);
-      // Add your signup API call here
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      const response = await api.post('/users/signup',data);
+      if(response.success){
+        toast.success(response.message);
+        navigate('/login')
+      }
     } catch (error) {
+      toast.error(error.details.error);
       console.error('Signup error:', error);
     }
   };

@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import { useState, useEffect, useRef } from "react";
 import Toggle from "./commonComponent/customFields/Toggle";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { useTheme } from "../context/ThemeContext/ThemeContext";
 import Notification from "./Notification";
+import useApi from "../hooks/instance";
 
 const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,7 +12,8 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
-
+  const api = useApi();
+  const navigate = useNavigate()
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -20,6 +22,18 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
     setIsNotificationOpen((prev) => !prev);
   };
 
+  const signOut = async ()=>{
+    try {
+        localStorage.removeItem('persistantState');
+        sessionStorage.clear(); 
+        navigate('/login')
+        toast.success('Logged out successfully!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred!';
+      toast.error(errorMessage);
+      console.error('Login error:', errorMessage);
+    }
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -90,12 +104,11 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
                   </NavLink>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
+                  <p onClick={signOut}
+                    className="cursor-pointer block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200"
                   >
                     Sign out
-                  </a>
+                  </p>
                 </li>
               </ul>
             </div>

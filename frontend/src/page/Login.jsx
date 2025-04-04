@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Input } from '../component/commonComponent/customFields';
 import { useForm } from 'react-hook-form';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
+import useApi from '../hooks/instance.js';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const {
@@ -15,17 +17,29 @@ const Login = () => {
             rememberMe: false
         }
     });
+    let api = useApi();
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
     const onFormSubmit = async (data) => {
         try {
-            console.log('Form submitted:', data);
-            // Add your login API call here
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+            const response = await api.post('/users/login', data);
+    
+            if (response.success) {
+                localStorage.setItem('persistantState', JSON.stringify(response.data));
+                toast.success(response.data.message || 'Login successful!');
+                navigate('/');
+            } else {
+                console.log(response.data)
+                toast.error(response.data?.message || 'Login failed!');
+            }
         } catch (error) {
-            console.error('Login error:', error);
+            const errorMessage = error.response?.data?.message || error.details.error || 'An error occurred!';
+            toast.error(errorMessage);
+            console.error('Login error:', errorMessage);
         }
     };
+    
 
     return (
         <div className="w-full min-h-screen flex flex-col sm:flex-row font-sans">

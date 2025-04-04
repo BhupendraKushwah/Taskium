@@ -471,6 +471,27 @@ input {
   color: #4e4e4e !important;
 }
 
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important; /* Forces background */
+  -webkit-text-fill-color: #fff !important; /* Ensures text color */
+  caret-color: #fff !important; /* Sets the cursor color */
+  transition: background-color 9999s ease-in-out 0s; /* Prevents autofill reset */
+}
+
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+}
+input:-webkit-autofill::first-line {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+
+
+
+
 input::placeholder {
   color: rgba(179, 179, 179, 0.774);
   /* font-weight: 300; */

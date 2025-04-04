@@ -14,7 +14,7 @@ import Login from './page/Login';
 import SignUp from './page/SignUp';
 import ForgotPassword from './page/ForgotPassword';
 import UserProfile from './page/UserProfile';
-
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 
@@ -22,6 +22,7 @@ function App() {
     <ProjectContextProvider>
       <TaskContextProvider>
         <ThemeContextProvider>
+            <Toaster  position="bottom-right" />
           <BrowserRouter>
             <Routes>
               <Route path='/' element={<Layout />}>
