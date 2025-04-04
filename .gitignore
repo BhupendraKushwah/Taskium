@@ -12,3 +12,5 @@ stats.html
 
 .eslintcache
 .qodo
+backend/.env
+frontend/.env
