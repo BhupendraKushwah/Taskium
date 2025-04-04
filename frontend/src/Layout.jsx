@@ -10,13 +10,13 @@ const Layout = () => {
         setIsSideNavOpen((prev) => !prev);
     };
 
-    // useEffect(() => {
-    //     const publicPaths = ['/login', '/signup', '/forgot-password'];
-    
-    //     if (!localStorage.getItem('user') && !publicPaths.includes(window.location.pathname)) {
-    //         navigate('/login');
-    //     }
-    // }, [navigate]);
+    useEffect(() => {
+        const publicPaths = ['/login', '/signup', '/forgot-password'];
+
+        if (!localStorage.getItem('user') && !publicPaths.includes(window.location.pathname)) {
+            navigate('/login');
+        }
+    }, [navigate]);
 
     return (
         <>

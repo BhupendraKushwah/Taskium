@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import Calendar from '../component/commonComponent/calendar/Calender';
+import { NavLink } from "react-router";
 import AttendanceSheet from '../component/Dashboard/AttendanceSheet';
 import PieChart from '../component/Dashboard/PieChart';
 
@@ -223,9 +222,9 @@ const ProjectDashboard = () => {
                   key={`projects-${index}`}
                   className="flex justify-between flex-col relative text-xs sm:text-sm hover:text-text-highlight dark:hover:text-gray-100 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 w-full"
                 >
-                  <a href={item.link} className="truncate font-medium">
+                  <NavLink to={item.link} className="truncate font-medium">
                     {item.name}
-                  </a>
+                  </NavLink>
                   <span className="text-xs text-gray-500 dark:text-gray-400">{item.date}</span>
                   <span
                     className={`mt-2 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 ${

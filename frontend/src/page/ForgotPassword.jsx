@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input } from '../component/commonComponent/customFields';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router';
+import { useParams,NavLink } from 'react-router';
 
 const ForgotPassword = () => {
     const {
@@ -42,12 +42,12 @@ const ForgotPassword = () => {
             <div className="sm:w-1/2 w-full sm:min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center transition-colors duration-300 py-6 sm:py-0">
                 <div className="w-full max-w-md mx-4 sm:mx-8 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 border border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-2 sm:gap-0 mb-4">
-                        <a
-                            href="/login"
+                        <NavLink
+                            to="/login"
                             className="text-sm text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200"
                         >
                             Back to Login
-                        </a>
+                        </NavLink>
                     </div>
 
                     <div className="text-center mb-6 sm:mb-8">
@@ -92,9 +92,9 @@ const ForgotPassword = () => {
 
                         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
                             Don't have an account?{' '}
-                            <a href="/signup" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
+                            <NavLink to="/signup" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
                                 Sign up
-                            </a>
+                            </NavLink>
                         </p>
                     </div>
                 </div>
@@ -147,12 +147,12 @@ export const ResetPassword = () => {
         <div className="sm:w-1/2 w-full sm:min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center transition-colors duration-300 py-6 sm:py-0">
           <div className="w-full max-w-md mx-4 sm:mx-8 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-2 sm:gap-0 mb-4 sm:mb-6">
-              <a
-                href="/login"
+              <NavLink
+                to="/login"
                 className="text-sm text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200"
               >
                 Back to Login
-              </a>
+              </NavLink>
             </div>
             <div className="text-center mb-6 sm:mb-8">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Reset Password</h2>
@@ -234,9 +234,9 @@ export const ResetPassword = () => {
   
             <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{' '}
-              <a href="/signup" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
+              <NavLink to="/signup" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
                 Sign up
-              </a>
+              </NavLink>
             </p>
           </div>
         </div>

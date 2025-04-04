@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input } from '../component/commonComponent/customFields';
 import { useForm } from 'react-hook-form';
+import { NavLink } from "react-router";
 
 const SignUp = () => {
   const {
@@ -178,12 +179,12 @@ const SignUp = () => {
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Remember me</span>
               </label>
-              <a
-                href="/forgot-password"
+              <NavLink
+                to="/forgot-password"
                 className="text-sm text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200"
               >
                 Forgot Password?
-              </a>
+              </NavLink>
             </div>
 
             <Button
@@ -199,9 +200,9 @@ const SignUp = () => {
 
           <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
             Already have an account?{' '}
-            <a href="/login" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
+            <NavLink to="/login" className="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 transition-colors duration-200">
               Login
-            </a>
+            </NavLink>
           </p>
         </div>
       </div>

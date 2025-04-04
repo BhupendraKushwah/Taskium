@@ -1,0 +1,88 @@
+import axios from 'axios';
+import { getAuthHeader } from '../services/Authentication.service';
+
+// Create axios instance with default configuration
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_SERVER_URL || '/',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+})
+
+// Request interceptor
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const authHeader = getAuthHeader();
+    config.headers = { ...config.headers, ...authHeader };
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response interceptor
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const errorResponse = {
+      status: error.response?.status || 500,
+      message: error.message || 'An unexpected error occurred',
+      details: error.response?.data,
+    };
+    Promise.reject(errorResponse);
+  }
+)
+
+//create request function
+
+const createRequest = async (method, baseURL, responseType = 'json') => {
+  return async (url, data = {}, options = {}) => {
+
+    const isParamsMethod = method == 'get' || method == 'delete';
+    const { status, error, ...configOptions } = options;
+    const requestConfig = {
+      url: `${baseURL}${url}`,
+      method,
+      responseType,
+      ...configOptions,
+    };
+    if (isParamsMethod) {
+      requestConfig.params = data;
+    } else {
+      requestConfig.data = data;
+    }
+    try {
+      const response = await axiosInstance.request(requestConfig);
+      if (status) {
+        return {
+          data: response.data,
+          status: response.status,
+          headers: response.headers,
+        };
+      }
+      return response.data;
+    }
+    catch (error) {
+      const errorResponse = {
+        status: err.status || 500,
+        message: err.message || 'Request failed',
+        details: err.details,
+      };
+      throw errorResponse;
+    }
+  }
+}
+
+export default function useApi(baseUrl = '/') {
+  return {
+    get: createRequest('get', baseUrl),
+    post: createRequest('post', baseUrl),
+    put: createRequest('put', baseUrl),
+    patch: createRequest('patch', baseUrl),
+    delete: createRequest('delete', baseUrl),
+    download: createRequest('get', baseUrl, 'blob'),
+  };
+}
