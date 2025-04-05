@@ -1,13 +1,13 @@
 export const getAuthHeader = () => {
     try {
         const persistantState = JSON.parse(localStorage.getItem('persistantState'));
-        let token = persistantState?.authToken
+        let token = persistantState?.token;
         if (!token) return null;
         return {
-            headers: { token }
+            Authorization :token
         }
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 }

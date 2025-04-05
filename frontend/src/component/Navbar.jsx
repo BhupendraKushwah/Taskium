@@ -4,15 +4,18 @@ import Toggle from "./commonComponent/customFields/Toggle";
 import { NavLink, useNavigate } from "react-router";
 import { useTheme } from "../context/ThemeContext/ThemeContext";
 import Notification from "./Notification";
-import useApi from "../hooks/instance";
+import { useUser } from "../context/userContext/UserContext";
+import { getImage } from "./commonComponent/common";
+import toast from "react-hot-toast";
 
 const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState({});
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
-  const api = useApi();
+  const { user } = useUser();
   const navigate = useNavigate()
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -22,12 +25,12 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
     setIsNotificationOpen((prev) => !prev);
   };
 
-  const signOut = async ()=>{
+  const signOut = async () => {
     try {
-        localStorage.removeItem('persistantState');
-        sessionStorage.clear(); 
-        navigate('/login')
-        toast.success('Logged out successfully!');
+      localStorage.removeItem('persistantState');
+      sessionStorage.clear();
+      navigate('/login')
+      toast.success('Logged out successfully!');
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || 'An error occurred!';
       toast.error(errorMessage);
@@ -36,6 +39,13 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   }
 
   useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('persistantState'));
+    if (!userData?.token) navigate('/login');
+  
+    if (user) {
+      setUserDetails(user);
+    }
+  
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -44,10 +54,11 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
         setIsNotificationOpen(false);
       }
     };
+  
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
-
+  }, [user]);
+  
   return (
     <div className="w-full bg-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700">
       <nav className="navbar flex justify-between items-center p-4 shadow-md rounded-lg">
@@ -72,7 +83,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
             >
               <span className="sr-only">Open user menu</span>
               <img
-                src="https://dummyimage.com/64x82/000/fff"
+                src={userDetails.image ? getImage("profile/small", userDetails.image) : "https://dummyimage.com/64x82/000/fff"}
                 alt="User"
                 className="rounded-full w-10 h-10 cursor-pointer"
               />
@@ -82,8 +93,8 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
                 } dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400`}
             >
               <div className="px-4 py-3 bg-teal-50 rounded-t-lg border-b-1 border-gray-200 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 dark:text-teal-400">
-                <NavLink to='profile/2' className="block text-sm font-semibold text-gray-900 dark:text-teal-400">Bonnie Green</NavLink>
-                <span className="block text-xs text-gray-500 truncate">name@flowbite.com</span>
+                <NavLink to='profile/2' className="block text-sm font-semibold text-gray-900 dark:text-teal-400">{userDetails.name}</NavLink>
+                <span className="block text-xs text-gray-500 truncate">{userDetails.email}</span>
               </div>
               <ul className="py-2">
                 <li className="flex justify-between items-center block px-4 py-2 text-sm text-gray-700 dark:text-teal-400 hover:bg-teal-100 hover:text-teal-600 transition-colors duration-200">

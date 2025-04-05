@@ -15,32 +15,35 @@ import SignUp from './page/SignUp';
 import ForgotPassword from './page/ForgotPassword';
 import UserProfile from './page/UserProfile';
 import { Toaster } from 'react-hot-toast';
+import UserProvider from './context/userContext/UserContextProvider';
 
 function App() {
 
   return (
-    <ProjectContextProvider>
-      <TaskContextProvider>
-        <ThemeContextProvider>
-            <Toaster  position="bottom-right" />
-          <BrowserRouter>
-            <Routes>
-              <Route path='/' element={<Layout />}>
-                <Route path="" element={<DashboardContent />} />
-                <Route path="/profile/:id" element={<UserProfile />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/settings" element={<Setting />} />
-                <Route path='*' element={<NotFound />} />
-              </Route >
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/forgot-password/:token?" element={<ForgotPassword />} />
-            </Routes>
-          </BrowserRouter>
-        </ThemeContextProvider>
-      </TaskContextProvider>
-    </ProjectContextProvider>
+    <BrowserRouter>
+      <UserProvider>
+        <ProjectContextProvider>
+          <TaskContextProvider>
+            <ThemeContextProvider>
+              <Toaster position="bottom-right" />
+              <Routes>
+                <Route path='/' element={<Layout />}>
+                  <Route path="" element={<DashboardContent />} />
+                  <Route path="/profile/:id" element={<UserProfile />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/settings" element={<Setting />} />
+                  <Route path='*' element={<NotFound />} />
+                </Route >
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/forgot-password/:token?" element={<ForgotPassword />} />
+              </Routes>
+            </ThemeContextProvider>
+          </TaskContextProvider>
+        </ProjectContextProvider>
+      </UserProvider>
+    </BrowserRouter>
   );
 }
 

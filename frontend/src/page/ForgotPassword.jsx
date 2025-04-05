@@ -133,7 +133,6 @@ export const ResetPassword = () => {
     try {
       data['token'] = token;
       let response = await api.post(`/settings/reset-password/${token}`, data);
-      console.log(response)
       if (response.success) {
         toast.success(response.message);
         navigate('/login')

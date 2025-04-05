@@ -5,7 +5,6 @@ import { useTheme } from '../../../context/ThemeContext/ThemeContext';
 const CustomMultiSelectField = forwardRef(
     ({ options = [], className = '', onChange, textColor = 'text-primary', ...props }, ref) => {
         const { theme } = useTheme();
-        console.log(theme)
         return (
             <ReactSelect
                 ref={ref}

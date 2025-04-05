@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router';
 import useApi from '../hooks/instance.js';
 import toast from 'react-hot-toast';
-
+import { useUser } from '../context/userContext/UserContext.js';
 const Login = () => {
     const {
         register,
@@ -18,6 +18,7 @@ const Login = () => {
         }
     });
     let api = useApi();
+    const {fetchUser} = useUser();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -28,15 +29,15 @@ const Login = () => {
             if (response.success) {
                 localStorage.setItem('persistantState', JSON.stringify(response.data));
                 toast.success(response.data.message || 'Login successful!');
+                await fetchUser();
                 navigate('/');
             } else {
-                console.log(response.data)
-                toast.error(response.data?.message || 'Login failed!');
+                toast.error(response.data?.error || 'Login failed!');
             }
         } catch (error) {
+            console.error('Login error:', error);
             const errorMessage = error.response?.data?.message || error.details.error || 'An error occurred!';
             toast.error(errorMessage);
-            console.error('Login error:', errorMessage);
         }
     };
     

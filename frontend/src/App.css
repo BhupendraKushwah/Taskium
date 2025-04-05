@@ -473,23 +473,35 @@ input {
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important; /* Forces background */
+  -webkit-text-fill-color: #4e4e4e !important; /* Ensures text color */
+  caret-color: #4e4e4e !important; /* Sets the cursor color */
+  transition: background-color 9999s ease-in-out 0s; /* Prevents autofill reset */
+}
+
+.dark input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important; /* Forces background */
   -webkit-text-fill-color: #fff !important; /* Ensures text color */
   caret-color: #fff !important; /* Sets the cursor color */
   transition: background-color 9999s ease-in-out 0s; /* Prevents autofill reset */
 }
 
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff !important;
   caret-color: #fff !important;
 }
-input:-webkit-autofill::first-line {
+.dark input:-webkit-autofill::first-line {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
 }
 
+.dark .ant-picker-dropdown .ant-picker-header{
+  color:#ffffff !important;
+}
 
-
+.dark .ant-picker-dropdown .ant-picker-header button{
+  color:#ffffff !important;
+}
 
 
 input::placeholder {

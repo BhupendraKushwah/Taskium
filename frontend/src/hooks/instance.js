@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { getAuthHeader } from '../services/Authentication.service';
+import toast from 'react-hot-toast';
 
 // Create axios instance with default configuration
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL || '/',
-  timeout: 10000,
+  timeout: 600000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -27,6 +28,11 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("persistantState");
+      toast.error("Session expired. Please log in again.");
+      window.location.href = '/login'; // Force redirect
+    }
     const errorResponse = {
       status: error.response?.status || 500,
       message: error.message || 'An unexpected error occurred',
