@@ -7,6 +7,7 @@ import Notification from "./Notification";
 import { useUser } from "../context/userContext/UserContext";
 import { getImage } from "./commonComponent/common";
 import toast from "react-hot-toast";
+import useApi from "../hooks/instance";
 
 const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,6 +18,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const { theme, toggleTheme } = useTheme();
   const { user } = useUser();
   const navigate = useNavigate()
+  const api = useApi();
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -27,6 +29,12 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
 
   const signOut = async () => {
     try {
+      let token = JSON.parse(localStorage.getItem('persistantState'))?.token;
+      let response = await api.post('/settings/logout', { token });
+      if(!response.success){
+        toast.error('Error while logging out!');
+        return;
+      }
       localStorage.removeItem('persistantState');
       sessionStorage.clear();
       navigate('/login')

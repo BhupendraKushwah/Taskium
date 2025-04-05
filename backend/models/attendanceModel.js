@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 const createAttendanceTable = async () => {
     try {
         const query = `
-            CREATE TABLE IF NOT EXISTS user_attendance (
+            CREATE TABLE IF NOT EXISTS userAttendance (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 userId INT NOT NULL,
                 status ENUM('PRESENT', 'ABSENT', 'LATE', 'EXCUSED') DEFAULT 'PRESENT',

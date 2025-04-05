@@ -4,10 +4,11 @@ import logger from '../config/logger.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import { insertUser, checkEmailExists, checkUsernameExists, getUserById, updateProfession, insertProfession, updateUser, updateSocial, insertSocial } from '../models/userModel.js'
+import { insertUser, checkEmailExists, checkUsernameExists, getUserById, updateProfession, insertProfession, updateUser, updateSocial, insertSocial, insertDeviceLogin } from '../models/userModel.js'
 import { sendWelcomeEmail } from '../services/emailService.js';
-import cloudinary from '../config/cloudinary.js';
 import { uploadImage } from '../utils/upload.js';
+const { UAParser } = await import('ua-parser-js');
+
 dotenv.config();
 const createUser = async (req, res) => {
     try {
@@ -26,7 +27,7 @@ const createUser = async (req, res) => {
         });
 
         const result = await insertUser(req.body);
-
+        sendWelcomeEmail(row[0].email, row[0].username);
         res.status(CONSTANTS.HTTP_STATUS.OK).json({
             success: true,
             data: {
@@ -53,7 +54,10 @@ const loginUser = async (req, res) => {
         if (await bcrypt.compare(password, row[0].password)) {
             let expiresIn = rememberMe ? '24hrs' : '10min';
             const token = jwt.sign({ userId: row[0].id }, process.env.JWT_TOKEN, { expiresIn });
-            sendWelcomeEmail(row[0].email, row[0].username);
+            let deviceData = getClientDetails(req, token);
+            deviceData['userId'] = row[0].id;
+            
+            await insertDeviceLogin(deviceData);
             res.status(CONSTANTS.HTTP_STATUS.OK).json({
                 success: true,
                 data: {
@@ -135,7 +139,7 @@ const getUserBytoken = async (req, res) => {
         let decodeToken = jwt.decode(authHeader, process.env.JWT_TOKEN);
         let userId = decodeToken.userId;
         let [user] = await getUserById(userId);
-        
+
         if (!user) return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ success: false, error: 'User does not exist' })
         return res.status(CONSTANTS.HTTP_STATUS.OK).json({
             success: true,
@@ -158,23 +162,23 @@ const updatePersonalInformation = async (req, res) => {
             const buffer = req.file.buffer
             const [original, small, medium] = await Promise.all([
                 uploadImage(buffer, {
-                  public_id: fileName,
-                  folder: 'taskium/profile/large',
-                  overwrite: true,
+                    public_id: fileName,
+                    folder: 'taskium/profile/large',
+                    overwrite: true,
                 }),
                 uploadImage(buffer, {
-                  public_id: fileName,
-                  folder: 'taskium/profile/small',
-                  overwrite: true,
-                  transformation: [{ width: 64, height: 82, crop: 'fill' }],
+                    public_id: fileName,
+                    folder: 'taskium/profile/small',
+                    overwrite: true,
+                    transformation: [{ width: 64, height: 82, crop: 'fill' }],
                 }),
                 uploadImage(buffer, {
-                  public_id: fileName,
-                  folder: 'taskium/profile/medium',
-                  overwrite: true,
-                  transformation: [{ width: 80, height: 102, crop: 'fill' }],
+                    public_id: fileName,
+                    folder: 'taskium/profile/medium',
+                    overwrite: true,
+                    transformation: [{ width: 80, height: 102, crop: 'fill' }],
                 }),
-              ]);
+            ]);
             const extension = req.file.mimetype.split('/')[1];
             req.body.image = `${fileName}.${extension}`;
         }
@@ -227,6 +231,31 @@ const updateSocialLinks = async (req, res) => {
     }
 }
 
+const getClientDetails = (req, token) => {
+    const userAgent = req.headers['user-agent'];
+    const parser = new UAParser(userAgent);
+    const result = parser.getResult();
+
+    const ipAddress =
+        req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+        req.connection?.remoteAddress ||
+        req.socket?.remoteAddress ||
+        req.ip;
+
+    const deviceId = req.headers['x-device-id'];
+
+
+    return {
+        deviceType: result.device.type || 'desktop',
+        osName: result.os.name || 'unknown',
+        osVersion: result.os.version || 'unknown',
+        browserName: result.browser.name || 'unknown',
+        browserVersion: result.browser.version || 'unknown',
+        ipAddress,
+        sessionToken: token,
+        deviceId
+    };
+};
 
 export {
     createUser,

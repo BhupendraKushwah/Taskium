@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Button } from '../component/commonComponent/customFields';
 import { Controller, useForm } from 'react-hook-form';
+import useApi from '../hooks/instance';
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
 
 const Setting = () => {
     const LoginData = [
@@ -8,7 +12,8 @@ const Setting = () => {
         { id: 2, device: 'Mac', userAgent: 'Macintosh', address: 'Raipur, Chhattisgarh, India', date: '23-01-2023', time: '10:30 AM' },
         { id: 3, device: 'Android', userAgent: 'android', address: 'Gwalior, Madhya Pradesh, India', date: '22-01-2023', time: '09:00 PM' },
     ];
-
+    const api = useApi();
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState({
         CurrentPassword: false,
         NewPassword: false,
@@ -21,19 +26,51 @@ const Setting = () => {
         console.log(data);
     };
 
-    function getDeviceIcon(ua) {
-        ua = ua.toLowerCase();
-        if (/windows/.test(ua)) return <i className="text-2xl ph ph-desktop text-teal-500 dark:text-teal-300"></i>;
-        if (/macintosh|mac os x/.test(ua)) return <i className="text-2xl ph ph-laptop text-teal-500 dark:text-teal-300"></i>;
-        if (/android/.test(ua)) return <i className="text-2xl ph ph-device-mobile text-teal-500 dark:text-teal-300"></i>;
-        if (/iphone|ipad|ipod/.test(ua)) return <i className="text-2xl ph ph-device-tablet text-teal-500 dark:text-teal-300"></i>;
-        if (/linux/.test(ua)) return <i className="text-2xl ph ph-desktop text-teal-500 dark:text-teal-300"></i>;
-        return <i className="text-2xl ph ph-question text-gray-500 dark:text-gray-400"></i>;
+    function getDeviceIcon(osName = '') {
+        osName = osName.toLowerCase();
+
+        if (osName.includes('windows')) return <i className="text-2xl ph ph-desktop text-teal-500 dark:text-teal-300" />;
+        if (osName.includes('mac')) return <i className="text-2xl ph ph-laptop text-teal-500 dark:text-teal-300" />;
+        if (osName.includes('android')) return <i className="text-2xl ph ph-device-mobile text-teal-500 dark:text-teal-300" />;
+        if (osName.includes('ios')) return <i className="text-2xl ph ph-device-tablet text-teal-500 dark:text-teal-300" />;
+        if (osName.includes('linux')) return <i className="text-2xl ph ph-desktop text-teal-500 dark:text-teal-300" />;
+
+        return <i className="text-2xl ph ph-question text-gray-500 dark:text-gray-400" />;
     }
 
+    const handleLogout = async (device) => {
+        try {
+            let response = await api.post('/settings/logout', { token: device.sessionToken });
+            if (response.success) {
+                let savedToken = JSON.parse(localStorage.getItem('persistantState'))?.token;
+                if (savedToken === device.sessionToken) {
+                    localStorage.removeItem('persistantState');
+                    navigate('/login')
+                }
+                else {
+                    setLoginDevices(prev=>prev.filter((item) => item.sessionToken !== device.sessionToken));
+                }
+                toast.success(response.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     useEffect(() => {
-        setLoginDevices(LoginData);
-    }, []);
+        const getLoginDevices = async () => {
+            try {
+                let response = await api.get('/settings/login-devices');
+                if (response.success) {
+                    setLoginDevices(response.data);
+                }
+            } catch (error) {
+                throw error;
+            }
+        }
+        getLoginDevices();
+    }, [loginDevices]);
 
     return (
         <div className="overflow-hidden dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800">
@@ -85,7 +122,7 @@ const Setting = () => {
                     ))}
                     <div className="flex justify-end">
                         <Button
-                            htmlType="submit"
+                            type="submit"
                             className="px-6 py-2 text-white bg-gradient-to-r from-teal-400 to-teal-600 dark:from-teal-500 dark:to-teal-700 rounded-md shadow-md hover:from-teal-500 hover:to-teal-700 dark:hover:from-teal-600 dark:hover:to-teal-800 transition-all duration-300"
                         >
                             Update Password
@@ -105,15 +142,20 @@ const Setting = () => {
                                     className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                                 >
                                     <span className="p-3 bg-teal-100 dark:bg-teal-800 rounded-full">
-                                        {getDeviceIcon(device.userAgent)}
+                                        {getDeviceIcon(device.osName)}
                                     </span>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{device.device}</p>
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                            {device.deviceType.charAt(0).toUpperCase() + device.deviceType.slice(1)} — {device.browserName} {device.browserVersion}
+                                        </p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            {device.address} • {device.date} at {device.time}
+                                            {device.osName} {device.osVersion}
+                                        </p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            {device.ipAddress} • {dayjs(device.createdAt).format('YYYY-MM-DD')} at {dayjs(device.createdAt).format('HH:mm A')}
                                         </p>
                                     </div>
-                                    <button className="text-teal-500 dark:text-teal-300 hover:text-teal-700 dark:hover:text-teal-400 text-sm font-medium cursor-pointer">
+                                    <button className="text-teal-500 dark:text-teal-300 hover:text-teal-700 dark:hover:text-teal-400 text-sm font-medium cursor-pointer" onClick={() => handleLogout(device)}>
                                         Log Out
                                     </button>
                                 </div>

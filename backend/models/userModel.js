@@ -71,7 +71,7 @@ const createSocialTable = async () => {
 const createUserDeviceLoginTable = async () => {
     try {
         const query = `
-            CREATE TABLE IF NOT EXISTS user_device_logins (
+            CREATE TABLE IF NOT EXISTS userDeviceLogins (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 userId INT NOT NULL,
                 deviceId VARCHAR(255) NOT NULL,
@@ -119,7 +119,7 @@ const insertDeviceLogin = async (data) => {
         if (!deviceType) throw new Error('Device type is required');
         if (!ipAddress) throw new Error('IP address is required');
 
-        const query = `INSERT INTO user_device_logins (userId, deviceId, deviceType, osName, osVersion, browserName, browserVersion, ipAddress, sessionToken) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const query = `INSERT INTO userDeviceLogins (userId, deviceId, deviceType, osName, osVersion, browserName, browserVersion, ipAddress, sessionToken) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const values = [userId, deviceId, deviceType, osName, osVersion, browserName, browserVersion, ipAddress, sessionToken];
         const [result] = await pool.query(query, values);
         return {
@@ -149,6 +149,7 @@ const insertUser = async (data) => {
         return {
             success: true,
             insertId: result.insertId,
+            result,
             message: `User '${name}' created successfully`
         };
     } catch (error) {
@@ -408,7 +409,7 @@ const getTableFields = async (tableName, fields = [], options = {}) => {
         }
 
         // Whitelist of allowed tables to prevent SQL injection
-        const allowedTables = ['users', 'professions', 'social', 'user_device_logins'];
+        const allowedTables = ['users', 'professions', 'social', 'userDeviceLogins'];
         if (!allowedTables.includes(tableName.toLowerCase())) {
             throw new Error('Invalid table name');
         }
@@ -474,6 +475,30 @@ const getTableFields = async (tableName, fields = [], options = {}) => {
     }
 };
 
+const findSessionByToken = async (token) => {
+    try {
+        const query = `SELECT * FROM userDeviceLogins WHERE sessionToken = ?`;
+        const values = [token];
+        const [result] = await pool.query(query, values);
+        return result;
+    } catch (error) {
+        logger.Error(error, { filepath: '/models/userModel.js', function: 'findSessionByToken' });
+        throw error;
+    }
+}
+
+const deleteSessionByToken = async (token) => {
+    try {
+        const query = `DELETE FROM userDeviceLogins WHERE sessionToken = ?`;
+        const values = [token];
+        const [result] = await pool.query(query, values);
+        return result;
+    } catch (error) {
+        logger.Error(error, { filepath: '/models/userModel.js', function: 'deleteSessionByToken' });
+        throw error;
+    }
+}
+
 export {
     createUserTable,
     createProfessionTable,
@@ -499,4 +524,6 @@ export {
     createUserDeviceLoginTable,
     getTableFields,
     insertDeviceLogin,
+    findSessionByToken,
+    deleteSessionByToken
 }

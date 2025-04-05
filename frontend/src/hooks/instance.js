@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getAuthHeader } from '../services/Authentication.service';
 import toast from 'react-hot-toast';
+import { getDeviceId } from '../component/commonComponent/common';
 
 // Create axios instance with default configuration
 const axiosInstance = axios.create({
@@ -17,7 +18,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const authHeader = getAuthHeader();
-    config.headers = { ...config.headers, ...authHeader };
+    const deviceId = getDeviceId();
+    config.headers = { ...config.headers, ...authHeader,'X-Device-Id': deviceId };
     return config
   },
   (error) => Promise.reject(error)

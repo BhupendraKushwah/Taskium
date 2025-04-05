@@ -7,3 +7,11 @@ export const getImage = (folder,image) =>{
         throw error;
     }
 }
+export const getDeviceId = () => {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+      deviceId = crypto.randomUUID(); // or any UUID lib
+      localStorage.setItem('deviceId', deviceId);
+    }
+    return deviceId;
+  };

@@ -23,7 +23,7 @@ const generateForgotPasswordToken = async (req, res) => {
         let nameValues = [email];
         let [nameRow] = await pool.query(nameQuery, nameValues);
         if (row.length) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-        let info = await sendPasswordResetLink(email,nameRow[0].username,`http://localhost:5173/forgot-password/${token}`)
+        let info = await sendPasswordResetLink(email, nameRow[0].username, `http://localhost:5173/forgot-password/${token}`)
         res.status(CONSTANTS.HTTP_STATUS.OK).json({
             success: true,
             data: {
@@ -73,4 +73,25 @@ const resetPassword = async (req, res) => {
     }
 }
 
-export { generateForgotPasswordToken, resetPassword }
+const getLoginDevices = async (req, res) => {
+    try {
+        let userId = req.userId;
+        let query = `SELECT * FROM userDeviceLogins WHERE userId = ?`;
+        let values = [userId];
+        let [row] = await pool.query(query, values);
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success: true,
+            data: row,
+            message: 'Login devices fetched successfully'
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getLoginDevices' });
+        throw error;
+    }
+}
+
+export {
+    generateForgotPasswordToken,
+    resetPassword,
+    getLoginDevices
+}
