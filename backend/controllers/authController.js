@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { insertUser, checkEmailExists, checkUsernameExists, getUserById, updateProfession, insertProfession, updateUser, updateSocial, insertSocial, insertDeviceLogin } from '../models/userModel.js'
 import { sendWelcomeEmail } from '../services/emailService.js';
 import { uploadImage } from '../utils/upload.js';
+import { insertUserAttendance } from '../models/attendanceModel.js';
+import { insertNotification } from '../models/notificationModel.js';
 const { UAParser } = await import('ua-parser-js');
 
 dotenv.config();
@@ -45,35 +47,65 @@ const loginUser = async (req, res) => {
     try {
         const { username, password, rememberMe } = req.body;
 
-        let query = `SELECT * FROM users WHERE username = ?`;
-        const values = [username];
-        const [row] = await pool.query(query, values);
-
-        if (!row.length) return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' })
-
-        if (await bcrypt.compare(password, row[0].password)) {
-            let expiresIn = rememberMe ? '24hrs' : '10min';
-            const token = jwt.sign({ userId: row[0].id }, process.env.JWT_TOKEN, { expiresIn });
-            let deviceData = getClientDetails(req, token);
-            deviceData['userId'] = row[0].id;
-            
-            await insertDeviceLogin(deviceData);
-            res.status(CONSTANTS.HTTP_STATUS.OK).json({
-                success: true,
-                data: {
-                    token,
-                    user: row[0]
-                },
-                message: 'Login successful'
-            });
-        } else {
-            res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' })
+        // Fetch user
+        const [users] = await pool.query(`SELECT * FROM users WHERE username = ?`, [username]);
+        if (!users.length) {
+            return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' });
         }
+
+        const user = users[0];
+
+        // Validate password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' });
+        }
+
+        // Generate token
+        const expiresIn = rememberMe ? '24h' : '10m';
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_TOKEN, { expiresIn });
+
+        // Device logging
+        const deviceData = {
+            ...getClientDetails(req, token),
+            userId: user.id
+        };
+
+        await insertDeviceLogin(deviceData);
+
+        // Attendance tracking
+        const today = new Date().toISOString().split('T')[0];
+        const [attendance] = await pool.query(
+            `SELECT id FROM userAttendance WHERE userId = ? AND date = ?`,
+            [user.id, today]
+        );
+
+        if (!attendance.length) {
+            await insertUserAttendance({ userId: user.id, date: today });
+        }
+
+        // Notification
+        await insertNotification({
+            userId: user.id,
+            message: "We've detected a login to your account."
+        });
+
+        // Respond
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success: true,
+            data: { token, user },
+            message: 'Login successful'
+        });
+
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'loginUser' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
+        logger.Error(error, {
+            filepath: '/controllers/settingController.js',
+            function: 'loginUser'
+        });
+
+        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Something went wrong' });
     }
-}
+};
 
 const getUserbyId = async (req, res) => {
     try {

@@ -76,7 +76,7 @@ const resetPassword = async (req, res) => {
 const getLoginDevices = async (req, res) => {
     try {
         let userId = req.userId;
-        let query = `SELECT * FROM userDeviceLogins WHERE userId = ?`;
+        let query = `SELECT * FROM userDeviceLogins WHERE userId = ? ORDER BY createdAt DESC`;
         let values = [userId];
         let [row] = await pool.query(query, values);
         res.status(CONSTANTS.HTTP_STATUS.OK).json({

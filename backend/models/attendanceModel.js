@@ -12,7 +12,6 @@ const createAttendanceTable = async () => {
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-                UNIQUE KEY unique_user_date (userId, date),
                 INDEX idx_userId (userId),
                 INDEX idx_date (date),
                 CHECK (checkOutTime IS NULL OR checkInTime IS NULL OR checkOutTime >= checkInTime)
@@ -55,7 +54,7 @@ const getUserAttendance = async (userId, options = {}) => {
                 date,
                 createdAt,
                 updatedAt
-            FROM user_attendance
+            FROM userAttendance
             WHERE userId = ?
         `;
         const queryParams = [userId];
@@ -107,12 +106,11 @@ const getUserAttendance = async (userId, options = {}) => {
 
 const insertUserAttendance = async (data) => {
     try {
-        const { userId, status, date } = data;
+        const { userId, date } = data;
         if (!userId) throw new Error('User ID is required');
-        if (!status) throw new Error('Status is required');
         if (!date) throw new Error('Date is required');
-        const query = `INSERT INTO user_attendance (userId, status, date) VALUES (?, ?, ?)`;
-        const values = [userId, status.toUpperCase(), date];
+        const query = `INSERT INTO userAttendance (userId, date) VALUES (?, ?)`;
+        const values = [userId, date];
         const [result] = await pool.query(query, values);
         return {
             success: true,

@@ -170,7 +170,6 @@ const insertNotification = async (data) => {
         const { userId, message, url } = data;
         if(!userId) throw new Error('User ID is required');
         if(!message) throw new Error('Message is required');
-        if(!url) throw new Error('URL is required');
         const query = `INSERT INTO notifications (userId, message, url) VALUES (?, ?, ?)`;
         const values = [userId, message, url];
         const [result] = await pool.query(query, values);
