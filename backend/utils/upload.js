@@ -1,16 +1,22 @@
 import cloudinary from '../config/cloudinary.js'
+import sharp from 'sharp';
 import logger from '../config/logger.js';
 
-export const uploadImage = async (file, folderName) => {
+export const uploadImage = async (buffer, options) => {
     try {
-        const result = await cloudinary.uploader.upload(file, {
-            resource_type: 'auto',
-            folder: `taskium/${folderName}`
-        })
-        console.log(result)
-    }
-    catch (error) {
-        logger.Error(error,{'filepath':'/utils/upload.js', 'function':'uploadImage'})
+        const compressedBuffer = await sharp(buffer)
+        .resize(800) // Optional: Resize to width 800px (preserves aspect ratio)
+        .jpeg({ quality: 70 }) // Compress to 70% quality JPEG
+        .toBuffer(); 
+
+        return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            });
+            stream.end(compressedBuffer);
+          });   
+    } catch (error) {
         console.log(error)
     }
 }

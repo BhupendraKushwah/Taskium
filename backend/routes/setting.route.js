@@ -7,7 +7,6 @@ router.post('/forgot-password', async (req, res) => {
     try {
         await generateForgotPasswordToken(req, res);
     } catch (error) {
-        console.log(res)
         res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
     }
 })

@@ -1,8 +1,8 @@
 import jsonwebtoken from "jsonwebtoken";
-import logger from "../config/logger";
-import CONSTANTS from "../config/constant";
+import logger from "../config/logger.js";
+import CONSTANTS from "../config/constant.js";
 
-export default verifyToken = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) {
         logger.Error('Token not found', { filepath: '/middleware/authMiddleware.js', function: 'verifyToken' });

@@ -36,7 +36,6 @@ const sendWelcomeEmail = async (toEmail, userName) => {
 
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.messageId);
         return info;
     } catch (error) {
         console.error('Error sending email:', error);
@@ -60,7 +59,6 @@ const sendPasswordResetLink = async (toEmail, userName, link) => {
             html: htmlTemplate,
         };
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.messageId);
         return info;
     } catch (error) {
         console.error('Error sending email:', error);

@@ -25,7 +25,6 @@ const createUserTable = async () => {
         return { success: true, message: 'Users table created successfully' };
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'createUserTable' });
-        console.log(error)
         throw error;
     }
 }
@@ -46,7 +45,6 @@ const createProfessionTable = async () => {
         await pool.query(query);
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'createProfessionTable' });
-        console.log(error)
         throw error;
     }
 }
@@ -66,7 +64,6 @@ const createSocialTable = async () => {
         await pool.query(query);
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'createSocialTable' });
-        console.log(error)
         throw error;
     }
 }
@@ -132,7 +129,6 @@ const insertDeviceLogin = async (data) => {
         }
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'InsertDeviceLogin' });
-        console.log(error);
         throw error;
     }
 }
@@ -157,7 +153,6 @@ const insertUser = async (data) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'InsertUser' });
-        console.log(error);
         throw error;
     }
 }
@@ -171,7 +166,6 @@ const insertProfession = async (data) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'InsertProfession' });
-        console.log(error);
         throw error;
     }
 }
@@ -185,21 +179,19 @@ const insertSocial = async (data) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'InsertSocial' });
-        console.log(error);
         throw error;
     }
 }
 
 const updateUser = async (data) => {
     try {
-        const { id, name, email, gender, phone, address, residence, dob, image, fcm_token = null } = data;
-        const query = `UPDATE users SET name = ?, email = ?, gender = ?, phone = ?, address = ?, residence = ?, dob = ? image=? WHERE id = ?`;
-        const values = [name, email, gender, phone, address, residence, dob, id];
+        const { id, name, email, gender, phone, address, residence, dob, image } = data;
+        const query = `UPDATE users SET name = ?, email = ?, gender = ?, phone = ?, address = ?, residence = ?, dob = ?, image=? WHERE id = ?`;
+        const values = [name, email, gender, phone, address, residence, dob,image, id];
         const [result] = await pool.query(query, values);
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'updateUser' });
-        console.log(error)
         throw error;
     }
 }
@@ -213,7 +205,6 @@ const updateProfession = async (data) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'updateProfession' });
-        console.log(error)
         throw error;
     }
 }
@@ -227,7 +218,6 @@ const updateSocial = async (data) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'updateSocial' });
-        console.log(error)
         throw error;
     }
 }
@@ -240,7 +230,6 @@ const deleteUser = async (id) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'deleteUser' });
-        console.log(error)
         throw error;
     }
 }
@@ -253,7 +242,6 @@ const deleteProfession = async (id) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'deleteProfession' });
-        console.log(error)
         throw error;
     }
 }
@@ -266,20 +254,46 @@ const deleteSocial = async (id) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'deleteSocial' });
-        console.log(error)
         throw error;
     }
 }
 
 const getUserById = async (id) => {
     try {
-        const query = `SELECT * FROM users WHERE id = ?`;
+        const query = `
+        SELECT 
+          users.id,
+          users.name,
+          users.username,
+          users.email,
+          users.phone,
+          users.image,
+          users.gender,
+          users.dob,
+          users.address,
+          users.residence,
+          users.fcm_token,
+          users.password,
+          users.passwordResetToken,
+          professions.designation,
+          professions.company,
+          professions.startDate,
+          professions.endDate,
+          professions.email as registeredEmail,
+          social.linkedin,
+          social.instagram,
+          social.facebook,
+          social.x
+        FROM users
+        LEFT JOIN professions ON users.id = professions.userId
+        LEFT JOIN social ON users.id = social.userId
+        WHERE users.id = ?
+      `;      
         const values = [id];
         const [result] = await pool.query(query, values);
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getUserById' });
-        console.log(error)
         throw error;
     }
 }
@@ -292,7 +306,6 @@ const getProfessionById = async (id) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getProfessionById' });
-        console.log(error)
         throw error;
     }
 }
@@ -305,7 +318,6 @@ const getSocialById = async (id) => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getSocialById' });
-        console.log(error)
         throw error;
     }
 }
@@ -317,7 +329,6 @@ const getUsers = async () => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getAllUsers' });
-        console.log(error)
         throw error;
     }
 }
@@ -329,7 +340,6 @@ const getProfessions = async () => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getAllProfessions' });
-        console.log(error)
         throw error;
     }
 }
@@ -341,7 +351,6 @@ const getSocials = async () => {
         return result;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getAllSocials' });
-        console.log(error)
         throw error;
     }
 }
@@ -364,7 +373,6 @@ const getUserDetails = async (id) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'getUserDetails' });
-        console.log(error);
         throw error;
     }
 };
@@ -376,7 +384,6 @@ const checkEmailExists = async (email) => {
         return result[0].count > 0;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'checkEmailExists' });
-        console.log(error);
         throw error;
     }
 };
@@ -389,7 +396,6 @@ const checkUsernameExists = async (username) => {
         return result[0].count > 0;
     } catch (error) {
         logger.Error(error, { filepath: '/models/userModel.js', function: 'checkEmailExists' });
-        console.log(error);
         throw error;
     }
 };

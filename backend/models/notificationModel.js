@@ -21,7 +21,6 @@ const createNotificationTable = async () => {
         }
     } catch (error) {
         logger.Error(error, { filepath: '/models/notificationModel.js', function: 'createNotificationTable' });
-        console.log(error)
         throw error;
     }
 }
@@ -113,7 +112,6 @@ const markNotificationAsRead = async (userId, notificationId = null, markAll = f
         }
     } catch (error) {
         logger.Error(error, { filepath: '/models/notificationModel.js', function: 'markNotificationAsRead' });
-        console.log(error);
         throw error;
     }
 }
@@ -131,9 +129,7 @@ const deleteNotification = async (id) => {
             affectedRows: result.affectedRows
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'deleteNotification' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'deleteNotification' });        throw error;
     }
 }
 
@@ -150,9 +146,7 @@ const deleteAllNotifications = async (userId) => {
             affectedRows: result.affectedRows
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'deleteAllNotifications' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'deleteAllNotifications' });        throw error;
     }
 }
 
@@ -167,9 +161,7 @@ const getNotificationById = async (id) => {
             data: result[0] || null
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'getNotificationById' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'getNotificationById' });        throw error;
     }
 }
 
@@ -188,9 +180,7 @@ const insertNotification = async (data) => {
             insertId: result.insertId
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'insertNotification' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/notificationModel.js', function: 'insertNotification' });        throw error;
     }
 }
 

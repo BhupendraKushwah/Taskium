@@ -25,7 +25,6 @@ const createTaskTable = async () => {
         return { success: true, message: 'Task table created successfully' };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'createTaskTable' });
-        console.log(error)
          throw error;
     }
 }
@@ -109,7 +108,6 @@ const getTasks = async (filters = {}, order_by = 'createdAt', order_direction = 
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'getTasks' });
-        console.log(error);
          throw error;
     }
 };
@@ -125,7 +123,6 @@ const getTaskById = async (id) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'getTaskById' });
-        console.log(error)
          throw error;
     }
 }
@@ -143,7 +140,6 @@ const createTask = async (data) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'createTask' });
-        console.log(error)
          throw error;
     }
 }
@@ -165,7 +161,6 @@ const updateTask = async (id, data) => {
         }
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'updateTask' });
-        console.log(error)
          throw error;
     }
 }
@@ -184,7 +179,6 @@ const deleteTask = async (id) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'deleteTask' });
-        console.log(error)
          throw error;
     }
 }
@@ -206,7 +200,6 @@ const updateTaskStatus = async (id, status) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/taskModel.js', function: 'updateTaskStatus' });
-        console.log(error);
          throw error;
     }
 };

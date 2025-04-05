@@ -25,8 +25,7 @@ const createAttendanceTable = async () => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/attendanceModel.js', function: 'createAttendanceTable' });
-        console.log(error);
-        throw new Error('Failed to create attendance table');
+        throw new Error(error);
     }
 };
 
@@ -122,7 +121,6 @@ const insertUserAttendance = async (data) => {
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/attendanceModel.js', function: 'insertUserAttendance' });
-        console.log(error);
         throw error;
     }
 };

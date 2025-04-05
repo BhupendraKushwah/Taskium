@@ -18,7 +18,6 @@ const createProjectTable = async () => {
         return { success: true, message: 'Project table created successfully' };
     } catch (error) {
         logger.Error(error, { filepath: '/models/projectModel.js', function: 'createProjectTable' });
-        console.log(error);
         throw error;
     }
 }
@@ -86,7 +85,6 @@ const getProjects = async (filters = {}, order_by = 'createdAt', order_direction
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/projectModel.js', function: 'getProjects' });
-        console.log(error);
         throw error;
     }
 };
@@ -101,9 +99,7 @@ const getProjectById = async (id) => {
             data: result[0] || null
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/projectModel.js', function: 'getProjectById' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/projectModel.js', function: 'getProjectById' });        throw error;
     }
 }
 
@@ -121,9 +117,7 @@ const createProject = async (data) => {
             message: `Project '${projectName}' created successfully`
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/projectModel.js', function: 'createProject' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/projectModel.js', function: 'createProject' });        throw error;
     }
 }
 
@@ -143,9 +137,7 @@ const updateProject = async (id, data) => {
             changedRows: result.changedRows
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/projectModel.js', function: 'updateProject' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/projectModel.js', function: 'updateProject' });        throw error;
     }
 }
 
@@ -164,9 +156,7 @@ const deleteProject = async (id) => {
             affectedRows: result.affectedRows
         };
     } catch (error) {
-        logger.Error(error, { filepath: '/models/projectModel.js', function: 'deleteProject' });
-        console.log(error)
-        throw error;
+        logger.Error(error, { filepath: '/models/projectModel.js', function: 'deleteProject' });        throw error;
     }
 }
 
