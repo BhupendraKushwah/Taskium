@@ -1,5 +1,6 @@
 import logger from "../config/logger.js";
 import pool from "../config/db.js";
+import CONSTANTS from "../config/constant.js";
 
 const createAttendanceTable = async () => {
     try {
@@ -90,17 +91,17 @@ const getUserAttendance = async (userId, options = {}) => {
             success: true,
             data: rows,
             count: rows.length,
-            filters: {
-                userId,
-                startDate,
-                endDate,
-                status
-            }
+            message: 'User attendance fetched successfully'
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/attendanceModel.js', function: 'getUserAttendance' });
         console.error('Error fetching attendance:', error.message);
-        throw new Error('Failed to retrieve user attendance');
+        throw new Error({
+            success: false,
+            data: [],
+            count: 0,
+            message: 'Failed to fetch user attendance'
+        });
     }
 };
 

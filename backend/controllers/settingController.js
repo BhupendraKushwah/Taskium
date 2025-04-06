@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { checkEmailExists } from '../models/userModel.js'
 import bcrypt from 'bcrypt';
 import { sendPasswordResetLink } from '../services/emailService.js';
+import { getUserAttendance } from '../models/attendanceModel.js';
 dotenv.config();
 const generateForgotPasswordToken = async (req, res) => {
     try {
@@ -90,8 +91,36 @@ const getLoginDevices = async (req, res) => {
     }
 }
 
+
+const getUserAttendances = async (req, res) => {
+    try {
+        let userId = req.userId;
+        const { success, data, message, count } = await getUserAttendance(userId)
+        
+        if (!success) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
+        if (data.length === 0) return res.status(CONSTANTS.HTTP_STATUS.NOT_FOUND).json({ error: 'No attendance found' })
+
+        let userAttendance = data.reduce((acc, item) => {
+            if (item.status === 'PRESENT') {
+              acc[item.date] = item.status;
+            }
+            return acc;
+          }, {});          
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success,
+            userAttendance:userAttendance,
+            message,
+            count
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getUserAttendance' });
+        throw error;
+    }
+}
+
 export {
     generateForgotPasswordToken,
     resetPassword,
-    getLoginDevices
+    getLoginDevices,
+    getUserAttendances
 }
