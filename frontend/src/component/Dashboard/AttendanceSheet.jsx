@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import useApi from '../../hooks/instance';
 
 const AttendanceSheet = () => {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -10,20 +11,33 @@ const AttendanceSheet = () => {
   const month = today.getMonth();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const api = useApi();
 
   useEffect(() => {
-    const todayKey = today.toISOString().split('T')[0];
-    if (!attendance[todayKey]) {
-      setAttendance((prev) => ({ ...prev, [todayKey]: 'present' }));
-    }
+    const getAttendance = async () => {
+      try {
+        let response = await api.get('/settings/attendance');
+        if (response.success) {
+          setAttendance(response.userAttendance);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAttendance();
+  }, []);
+
+  useEffect(() => {
+    console.log(attendance);
   }, [attendance]);
+
 
   const getStreak = () => {
     let streak = 0;
     const sortedDates = Object.keys(attendance).sort();
-    
+
     for (let i = sortedDates.length - 1; i >= 0; i--) {
-      if (attendance[sortedDates[i]] === 'present') streak++;
+      if (attendance[sortedDates[i]] === 'PRESENT') streak++;
       else break;
     }
     return streak;
@@ -42,18 +56,18 @@ const AttendanceSheet = () => {
       );
     }
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateKey = new Date(year, month, day).toISOString().split('T')[0];
+      const dateKey = new Date(Date.UTC(year, month, day)).toISOString().split('T')[0];
       const status = attendance[dateKey] || 'absent';
       calendar.push(
         <div
           key={dateKey}
           className={`p-1 sm:p-2 border border-gray-200 dark:border-gray-700 rounded flex justify-center items-center min-w-[1.5rem] h-6 sm:h-8 ${
-            status === 'present'
+            status === 'PRESENT'
               ? 'bg-green-200 dark:bg-green-700 dark:text-white'
               : status === 'partial'
-              ? 'bg-yellow-200 dark:bg-yellow-700 dark:text-white'
-              : 'bg-gray-200 dark:bg-gray-600 dark:text-gray-300'
-          } ${dateKey === today.toISOString().split('T')[0] ? 'border-2 border-teal-500 dark:border-teal-400' : ''}`}
+                ? 'bg-yellow-200 dark:bg-yellow-700 dark:text-white'
+                : 'bg-gray-200 dark:bg-gray-600 dark:text-gray-300'
+            } ${dateKey === today.toISOString().split('T')[0] ? 'border-2 border-teal-500 dark:border-teal-400' : ''}`}
         >
           <span className="text-[10px] sm:text-xs">{day}</span>
         </div>
@@ -122,7 +136,7 @@ const AttendanceSheet = () => {
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            {Object.values(attendance).filter((s) => s === 'present').length}/{daysInMonth}
+            {Object.values(attendance).filter((s) => s === 'PRESENT').length}/{daysInMonth}
           </span>
         </div>
       </div>

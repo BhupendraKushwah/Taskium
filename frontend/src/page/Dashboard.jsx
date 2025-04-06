@@ -3,10 +3,11 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { NavLink } from "react-router";
 import AttendanceSheet from '../component/Dashboard/AttendanceSheet';
 import PieChart from '../component/Dashboard/PieChart';
-
+import { useUser } from '../context/userContext/UserContext';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ProjectDashboard = () => {
+  const { user } = useUser();
   const dashboardData = {
     todayTasks: {
       title: "Today's Tasks",
@@ -91,7 +92,7 @@ const ProjectDashboard = () => {
         {/* Header */}
         <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white dark:bg-gray-800 p-2 rounded dark:border-gray-700">
           <h3 className="text-lg text-base-black dark:text-white truncate">
-            {greetMessage()}, Bhupendra
+            {greetMessage()}, {user?.name}
           </h3>
           <div className="content-head-right flex items-center text-base-black-light dark:text-gray-300 text-sm space-x-2 sm:space-x-4">
             <span className="truncate">{new Date().toDateString()}</span>
@@ -111,37 +112,34 @@ const ProjectDashboard = () => {
               {dashboardContent.todayTasks.items.map((item, index) => (
                 <li
                   key={`today-${index}`}
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
-                    item.status === 'done'
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${item.status === 'done'
                       ? 'line-through bg-gray-300 dark:bg-gray-600 pointer-events-none opacity-50'
                       : 'hover:text-text-highlight dark:hover:text-gray-100'
-                  }`}
+                    }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
                     <span className="relative inline-block custom-ui-checkbox">
                       <input
                         onClick={() => handleStatusChange(item.id, 'todayTasks')}
                         type="checkbox"
-                        className={`w-4 h-4 mr-2 flex-shrink-0 rounded-md appearance-none border-2 cursor-pointer transition-all duration-200 ease-in-out ${
-                          item.status === 'done'
+                        className={`w-4 h-4 mr-2 flex-shrink-0 rounded-md appearance-none border-2 cursor-pointer transition-all duration-200 ease-in-out ${item.status === 'done'
                             ? 'bg-primary-500 border-primary-700'
                             : item.status === 'in-progress'
-                            ? 'bg-yellow-300 border-yellow-500'
-                            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
-                        } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
+                              ? 'bg-yellow-300 border-yellow-500'
+                              : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
+                          } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
                         defaultChecked={item.status === 'done'}
                       />
                     </span>
                     <span className="truncate">{item.text}</span>
                   </span>
                   <span
-                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
-                      item.priority === 'high'
+                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${item.priority === 'high'
                         ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200'
                         : item.priority === 'medium'
-                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
-                        : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
-                    }`}
+                          ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
+                          : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
+                      }`}
                   >
                     {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)}
                   </span>
@@ -157,7 +155,7 @@ const ProjectDashboard = () => {
               {dashboardContent.taskStats.title}
             </h2>
             <div className="flex-grow relative">
-             <PieChart dashboardContent={dashboardContent} />
+              <PieChart dashboardContent={dashboardContent} />
             </div>
           </div>
 
@@ -171,37 +169,34 @@ const ProjectDashboard = () => {
               {dashboardContent.pendingTasks.items.map((item, index) => (
                 <li
                   key={`pending-${index}`}
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${
-                    item.status === 'done'
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs sm:text-sm transition-colors duration-200 ${item.status === 'done'
                       ? 'line-through bg-gray-300 dark:bg-gray-600 pointer-events-none opacity-50'
                       : 'hover:text-text-highlight dark:hover:text-gray-100'
-                  }`}
+                    }`}
                 >
                   <span className="flex items-center min-w-0 flex-1">
                     <span className="relative inline-block custom-ui-checkbox">
                       <input
                         onClick={() => handleStatusChange(item.id, 'pendingTasks')}
                         type="checkbox"
-                        className={`w-4 h-4 mr-2 flex-shrink-0 rounded-md appearance-none border-2 cursor-pointer transition-all duration-200 ease-in-out ${
-                          item.status === 'done'
+                        className={`w-4 h-4 mr-2 flex-shrink-0 rounded-md appearance-none border-2 cursor-pointer transition-all duration-200 ease-in-out ${item.status === 'done'
                             ? 'bg-primary-500 border-primary-700'
                             : item.status === 'in-progress'
-                            ? 'bg-yellow-300 border-yellow-500'
-                            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
-                        } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
+                              ? 'bg-yellow-300 border-yellow-500'
+                              : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600'
+                          } hover:scale-110 hover:shadow-md checked:bg-opacity-90 checked:border-opacity-90`}
                         defaultChecked={item.status === 'done'}
                       />
                     </span>
                     <span className="truncate">{item.text}</span>
                   </span>
                   <span
-                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${
-                      item.priority === 'high'
+                    className={`mt-2 sm:mt-0 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 sm:ml-2 ${item.priority === 'high'
                         ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200'
                         : item.priority === 'medium'
-                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
-                        : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
-                    }`}
+                          ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-200'
+                          : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200'
+                      }`}
                   >
                     {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)}
                   </span>
@@ -227,13 +222,12 @@ const ProjectDashboard = () => {
                   </NavLink>
                   <span className="text-xs text-gray-500 dark:text-gray-400">{item.date}</span>
                   <span
-                    className={`mt-2 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 ${
-                      item.status === 'done meat'
+                    className={`mt-2 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full text-xs flex-shrink-0 ${item.status === 'done meat'
                         ? 'bg-primary-20 text-primary border-primary dark:bg-primary-900 dark:text-primary-200 dark:border-primary-700'
                         : item.status === 'in-progress'
-                        ? 'bg-yellow-200 text-yellow-800 border-yellow-400 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700'
-                        : 'bg-white text-text-sub border-text-sub dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                    }`}
+                          ? 'bg-yellow-200 text-yellow-800 border-yellow-400 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700'
+                          : 'bg-white text-text-sub border-text-sub dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                      }`}
                   >
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                   </span>
