@@ -7,6 +7,7 @@ import { checkEmailExists } from '../models/userModel.js'
 import bcrypt from 'bcrypt';
 import { sendPasswordResetLink } from '../services/emailService.js';
 import { getUserAttendance } from '../models/attendanceModel.js';
+import { getNotifications, markNotificationAsRead } from '../models/notificationModel.js';
 dotenv.config();
 const generateForgotPasswordToken = async (req, res) => {
     try {
@@ -96,19 +97,19 @@ const getUserAttendances = async (req, res) => {
     try {
         let userId = req.userId;
         const { success, data, message, count } = await getUserAttendance(userId)
-        
+
         if (!success) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
         if (data.length === 0) return res.status(CONSTANTS.HTTP_STATUS.NOT_FOUND).json({ error: 'No attendance found' })
 
         let userAttendance = data.reduce((acc, item) => {
             if (item.status === 'PRESENT') {
-              acc[item.date] = item.status;
+                acc[item.date] = item.status;
             }
             return acc;
-          }, {});          
+        }, {});
         res.status(CONSTANTS.HTTP_STATUS.OK).json({
             success,
-            userAttendance:userAttendance,
+            userAttendance: userAttendance,
             message,
             count
         })
@@ -118,9 +119,41 @@ const getUserAttendances = async (req, res) => {
     }
 }
 
+const getUserNotifications = async (req, res) => {
+    try {
+        let userId = req.userId;
+        let { success, data, message, count } = await getNotifications(userId, req.query.params);
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success,
+            data,
+            message,
+            count
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getNotifications' });
+        throw error;
+    }
+}
+
+const markAllAsRead = async (req, res) => {
+    try {
+        const userId = req.userId;
+        await markNotificationAsRead(userId, null, true);
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success: true,
+            message: 'All notifications marked as read'
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'markAllAsRead' });
+        throw error;
+    }
+}
+
 export {
     generateForgotPasswordToken,
     resetPassword,
     getLoginDevices,
-    getUserAttendances
+    getUserAttendances,
+    getUserNotifications,
+    markAllAsRead
 }

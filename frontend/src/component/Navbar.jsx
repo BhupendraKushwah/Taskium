@@ -78,7 +78,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
             <span className="relative" onClick={toggleNotification}>
               <i className={`fu ph-fill ph-bell text-2xl text-gray-600 hover:text-teal-500 ${isNotificationOpen ? "text-teal-500" : ""} transition-colors duration-200`}></i>
             </span>
-            {isNotificationOpen && <div className="absolute z-[9999] right-4">
+            {isNotificationOpen && <div className="absolute z-[9999] right-8">
               <Notification />
             </div>}
           </div>

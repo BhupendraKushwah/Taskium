@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
         await insertDeviceLogin(deviceData);
 
         // Attendance tracking
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toLocaleDateString('en-CA').split('T')[0];
         const [attendance] = await pool.query(
             `SELECT id FROM userAttendance WHERE userId = ? AND date = ?`,
             [user.id, today]

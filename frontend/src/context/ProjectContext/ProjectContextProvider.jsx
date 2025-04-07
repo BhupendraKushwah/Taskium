@@ -8,7 +8,7 @@ const ProjectContextProvider = ({ children }) => {
             _id: Date.now()+Math.random(),
             name: project.projectName,
             description: project.description,
-            startDate: new Date(project?.startDate)?.toISOString().split("T")[0],
+            startDate: new Date(project?.startDate)?.toLocaleDateString('en-CA').split("T")[0],
             team: project.teamMembers
         }])
     }

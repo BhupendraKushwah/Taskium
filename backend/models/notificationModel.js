@@ -27,7 +27,7 @@ const createNotificationTable = async () => {
 const getNotifications = async (userId, options = {}) => {
     try {
         const {
-            limit = CONSTANTS.PAGINATION.DEFAULT_LIMIT || 50,
+            limit = CONSTANTS.PAGINATION.DEFAULT_LIMIT || 10,
             offset = 0,
             isRead = null,
             sortOrder = 'DESC'
@@ -36,14 +36,9 @@ const getNotifications = async (userId, options = {}) => {
         // Build the base query
         let query = `
             SELECT 
-                id,
-                userId,
-                message,
-                createdAt,
-                url,
-                isRead,
-                type
-            FROM notifications
+                notifications.*,users.name as userName,users.image
+                FROM notifications
+                JOIN users ON notifications.userId = users.id
             WHERE 1=1
         `;
 
@@ -68,11 +63,12 @@ const getNotifications = async (userId, options = {}) => {
         queryParams.push(parseInt(limit), parseInt(offset));
 
         const [result] = await pool.query(query, queryParams);
-
+        const [unReadCount] = await pool.query(`SELECT COUNT(*) as count FROM notifications WHERE userId = ? AND isRead = 0`, [userId]);
         return {
             success: true,
             data: result,
-            count: result.length
+            count: unReadCount[0].count,
+            message: 'Notifications fetched successfully'
         };
     } catch (error) {
         logger.Error(error, { filepath: '/models/notificationModel.js', function: 'getNotifications' });
@@ -86,7 +82,7 @@ const markNotificationAsRead = async (userId, notificationId = null, markAll = f
         if (!userId) throw new Error('User ID is required');
         let query, values, result
         if (markAll) {
-            query = `UPDATE notifications SET isRead = 1 WHERE userId = ? AND isRead = FALSE`;
+            query = `UPDATE notifications SET isRead = 1 WHERE userId = ? AND isRead = 0`;
             values = [userId];
             [result] = await pool.query(query, values);
             if (!result.affectedRows) return { success: false, message: `No notification found to mark as read` };

@@ -56,7 +56,7 @@ const AttendanceSheet = () => {
       );
     }
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateKey = new Date(Date.UTC(year, month, day)).toISOString().split('T')[0];
+      const dateKey = new Date(Date.UTC(year, month, day)).toLocaleDateString('en-CA').split('T')[0];
       const status = attendance[dateKey] || 'absent';
       calendar.push(
         <div
@@ -67,7 +67,7 @@ const AttendanceSheet = () => {
               : status === 'partial'
                 ? 'bg-yellow-200 dark:bg-yellow-700 dark:text-white'
                 : 'bg-gray-200 dark:bg-gray-600 dark:text-gray-300'
-            } ${dateKey === today.toISOString().split('T')[0] ? 'border-2 border-teal-500 dark:border-teal-400' : ''}`}
+            } ${dateKey === today.toLocaleDateString('en-CA').split('T')[0] ? 'border-2 border-teal-500 dark:border-teal-400' : ''}`}
         >
           <span className="text-[10px] sm:text-xs">{day}</span>
         </div>
@@ -77,7 +77,7 @@ const AttendanceSheet = () => {
   };
 
   return (
-    <div className="rounded-xl bg-white dark:bg-gray-800 dark:border-gray-700 p-4 sm:p-6 w-full shadow-xl hover:shadow-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transform hover:-translate-y-1 transition-all duration-300 min-h-[300px] flex flex-col">
+    <div className="rounded-xl bg-white dark:bg-gray-800 dark:border-gray-700 p-4 sm:p-6 w-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 cursor-pointer transition-all duration-300 min-h-[300px] flex flex-col">
       <div className="mb-2 sm:mb-4 flex items-center">
         <h5 className="text-sm lg:text-lg font-semibold text-base-black dark:text-white flex items-center">
           <span className="mr-2 bg-teal-300 px-1 py-2 sm:px-2 sm:py-3 rounded"></span>
