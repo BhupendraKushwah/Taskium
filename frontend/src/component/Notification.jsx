@@ -4,7 +4,7 @@ import { NavLink } from 'react-router';
 import useApi from '../hooks/instance';
 import { getCustomTimeAgo, getImage } from './commonComponent/common';
 
-const Notification = () => {
+const Notification = ({setNotificationCount}) => {
     const api = useApi();
     const [notificationData, setNotificationData] = useState([]);
     const [offset, setOffset] = useState(0);
@@ -54,6 +54,7 @@ const Notification = () => {
             setNotificationData(prev =>
                 prev.map(n => ({ ...n, isRead: 1 }))
             );
+            setNotificationCount(0)
             toast.success('All notifications marked as read');
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred!';

@@ -18,7 +18,7 @@ const ProjectDetails = ({ project }) => {
   const focusTag = "Design";
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-white to-teal-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 p-6 w-full max-w-sm shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 max-h-[380px] mx-auto border border-teal-100 dark:border-gray-700 h-full">
+    <div className="rounded-2xl bg-gradient-to-br overflow-y-auto from-white to-teal-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 p-6 w-full max-w-sm shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 max-h-[380px] mx-auto border border-teal-100 dark:border-gray-700 h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-4">

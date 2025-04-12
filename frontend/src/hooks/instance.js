@@ -32,8 +32,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("persistantState");
-      toast.error("Session expired. Please log in again.");
-      window.location.href = '/login'; // Force redirect
+      if(window.location.pathname!=='/login')
+        window.location.href = '/login';
     }
     const errorResponse = {
       status: error.response?.status || 500,

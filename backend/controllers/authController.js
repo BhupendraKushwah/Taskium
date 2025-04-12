@@ -62,7 +62,7 @@ const loginUser = async (req, res) => {
         }
 
         // Generate token
-        const expiresIn = rememberMe ? '24h' : '10m';
+        const expiresIn = rememberMe ? '24h' : '1h';
         const token = jwt.sign({ userId: user.id }, process.env.JWT_TOKEN, { expiresIn });
 
         // Device logging

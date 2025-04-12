@@ -8,7 +8,12 @@ async function initializeDatabase() {
         const connection = await mysql.createConnection({
             host: process.env.HOST,
             user: process.env.DB_USER,
-            password: process.env.PASSWORD
+            password: process.env.PASSWORD,
+            port: process.env.DB_PORT || 3306,
+            // ssl: {
+            //     minVersion: 'TLSv1.2',
+            //     rejectUnauthorized: true
+            // }
         });
 
         await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\``);
@@ -21,14 +26,19 @@ async function initializeDatabase() {
     }
 }
 
+console.log(process.env.DB_PORT)
 async function createPool() {
     await initializeDatabase();
-
     const pool = mysql.createPool({
         host: process.env.HOST,
         user: process.env.DB_USER,
         password: process.env.PASSWORD,
         database: process.env.DB_NAME,
+        port: process.env.DB_PORT || 3306, // TiDB default
+        // ssl: {
+        //   minVersion: 'TLSv1.2',
+        //   rejectUnauthorized: true
+        // },
         dateStrings: true
     });
 

@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { generateForgotPasswordToken, resetPassword, getLoginDevices, getUserAttendances, getUserNotifications, markAllAsRead } from '../controllers/settingController.js'
+import { generateForgotPasswordToken, resetPassword, getLoginDevices, getUserAttendances, getUserNotifications, markAllAsRead, getNotificationsCount } from '../controllers/settingController.js'
 import CONSTANTS from "../config/constant.js";
 import { verifyToken } from '../middleware/authMiddleware.js';
 import { deleteSessionByToken } from '../models/userModel.js';
@@ -61,6 +61,14 @@ router.get('/notifications', verifyToken, async (req, res) => {
 router.post('/mark-all-as-read', verifyToken, async (req, res) => {
     try {
        await markAllAsRead(req, res);
+    } catch (error) {
+        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
+    }
+})
+
+router.get('/get-notification-count', verifyToken, async (req, res) => {
+    try {
+       await getNotificationsCount(req, res);
     } catch (error) {
         res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
     }

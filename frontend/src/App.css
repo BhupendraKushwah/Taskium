@@ -1,5 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 :root {
   /* Base Colors */
   --base-black: hsl(216, 15%, 9%);
@@ -61,26 +62,30 @@
 /* Scrollbar */
 /* Global Scrollbar Styles */
 ::-webkit-scrollbar {
-  width: 8px; /* Mobile-friendly */
+  width: 8px;
+  /* Mobile-friendly */
   height: 8px;
 }
 
 @media (min-width: 640px) {
   ::-webkit-scrollbar {
-    width: 12px; /* Desktop size */
+    width: 12px;
+    /* Desktop size */
     height: 12px;
   }
 }
 
 /* Light Theme (Default) */
 ::-webkit-scrollbar-track {
-  background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); /* Soft gray gradient */
+  background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+  /* Soft gray gradient */
   border-radius: 12px;
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #99f6e4, #2dd4bf); /* Soft teal gradient */
+  background: linear-gradient(135deg, #99f6e4, #2dd4bf);
+  /* Soft teal gradient */
   border-radius: 12px;
   background-clip: padding-box;
   border: 2px solid transparent;
@@ -88,23 +93,28 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #99f6e4, #0d9488); /* Deeper teal on hover */
+  background: linear-gradient(135deg, #99f6e4, #0d9488);
+  /* Deeper teal on hover */
   transform: scale(1.05);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(135deg, #5eead4, #0d9488); /* Even deeper when clicked */
+  background: linear-gradient(135deg, #5eead4, #0d9488);
+  /* Even deeper when clicked */
 }
 
 /* Dark Theme */
 .dark ::-webkit-scrollbar-track {
-  background: linear-gradient(to bottom, #1f2937, #374151); /* Dark gray gradient (gray-800 to gray-700) */
+  background: linear-gradient(to bottom, #1f2937, #374151);
+  /* Dark gray gradient (gray-800 to gray-700) */
   border-radius: 12px;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); /* Slightly deeper shadow for dark mode */
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  /* Slightly deeper shadow for dark mode */
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #5eead4, #0d9488); /* Darker teal gradient (teal-300 to teal-700) */
+  background: linear-gradient(135deg, #5eead4, #0d9488);
+  /* Darker teal gradient (teal-300 to teal-700) */
   border-radius: 12px;
   background-clip: padding-box;
   border: 2px solid transparent;
@@ -112,18 +122,21 @@
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #99f6e4, #0d9488); /* Lighter teal to deep teal on hover */
+  background: linear-gradient(135deg, #99f6e4, #0d9488);
+  /* Lighter teal to deep teal on hover */
   transform: scale(1.05);
 }
 
 .dark ::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(135deg, #2dd4bf, #0d9488); /* Mid-teal to deepest teal when clicked */
+  background: linear-gradient(135deg, #2dd4bf, #0d9488);
+  /* Mid-teal to deepest teal when clicked */
 }
 
 /* Firefox fallback */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2dd4bf #e2e8f0; /* Teal thumb, gray track */
+  scrollbar-color: #2dd4bf #e2e8f0;
+  /* Teal thumb, gray track */
 }
 
 .ts-body {
@@ -151,9 +164,10 @@ h4 {
   align-items: center;
 }
 
-.page{
+.page {
   height: calc(100vh - 173px);
 }
+
 .fs24 {
   font-size: 24px;
 }
@@ -285,7 +299,7 @@ h4 {
   box-shadow: 0 0 3px #009966;
 }
 
-.dark .ts-input-search{
+.dark .ts-input-search {
   background: oklch(0.373 0.034 259.733);
   color: #fff !important;
   border-radius: 5px;
@@ -293,27 +307,34 @@ h4 {
 }
 
 .ts-input-search:disabled {
-  background: #f3f4f6; /* gray-100 equivalent */
-  color: #6b7280; /* gray-500 for contrast */
+  background: #f3f4f6;
+  /* gray-100 equivalent */
+  color: #6b7280;
+  /* gray-500 for contrast */
   border-radius: 5px;
-  outline: 1px solid #e5e7eb; /* gray-200 */
-}
-/* Dark Theme Disabled State */
-.dark .ts-input-search:disabled {
-  background: oklch(0.573 0.034 259.933); /* Your dark background */
-  color: #ffffff; /* White text */
-  border-radius: 5px;
-  outline: 1px solid oklch(0.62 0 0); /* Your gray outline */
+  outline: 1px solid #e5e7eb;
+  /* gray-200 */
 }
 
-.dark .x-btn{
+/* Dark Theme Disabled State */
+.dark .ts-input-search:disabled {
+  background: oklch(0.573 0.034 259.933);
+  /* Your dark background */
+  color: #ffffff;
+  /* White text */
+  border-radius: 5px;
+  outline: 1px solid oklch(0.62 0 0);
+  /* Your gray outline */
+}
+
+.dark .x-btn {
   background: oklch(0.373 0.034 259.733);
   color: #fff !important;
-  border-left:1px solid #606060;
+  border-left: 1px solid #606060;
 }
 
 @media (max-width: 425px) {
-  .ts-input-search{
+  .ts-input-search {
     width: 100%;
   }
 }
@@ -354,71 +375,92 @@ polyline {
 /* custom datepicker */
 :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
   border: #009966 solid 1px;
-  border-radius:50% ;
+  border-radius: 50%;
   background-color: #c7f0e2a4 !important;
   padding: 10px;
 }
 
-.ant-picker{
+.ant-picker {
   padding: 7px;
 }
+
 /* Base TimePicker styles in dark mode */
 .dark .ant-picker {
-  background: #374151 !important; /* gray-700 */
-  color: #ffffff !important; /* white */
-  border-color: #4b5563 !important; /* gray-600 */
+  background: #374151 !important;
+  /* gray-700 */
+  color: #ffffff !important;
+  /* white */
+  border-color: #4b5563 !important;
+  /* gray-600 */
 }
 
-.dark .ant-picker-input > input {
-  color: #ffffff !important; /* white */
+.dark .ant-picker-input>input {
+  color: #ffffff !important;
+  /* white */
 }
 
 .dark .ant-picker-suffix {
-  color: #9ca3af !important; /* gray-400 */
+  color: #9ca3af !important;
+  /* gray-400 */
 }
 
 /* Dropdown styles */
 .dark .ant-picker-dropdown {
-  background: #000000 !important; /* black, as per your CSS */
-  color: #ffffff !important; /* white text for readability */
-  border: 1px solid #4b5563 !important; /* gray-600 border */
+  background: #000000 !important;
+  /* black, as per your CSS */
+  color: #ffffff !important;
+  /* white text for readability */
+  border: 1px solid #4b5563 !important;
+  /* gray-600 border */
 }
 
 .dark .ant-picker-panel-container {
-  background: #000000 !important; /* match dropdown background */
+  background: #000000 !important;
+  /* match dropdown background */
   color: #ffffff !important;
 }
 
 .dark .ant-picker-panel {
   background: #000000 !important;
-  border-color: #4b5563 !important; /* gray-600 */
+  border-color: #4b5563 !important;
+  /* gray-600 */
 }
 
-.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner {
-  color: #ffffff !important; /* white text in time options */
+.dark .ant-picker-time-panel-column>li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner {
+  color: #ffffff !important;
+  /* white text in time options */
 }
 
-.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
-  background: #1f7661 !important; /* teal-600 for selected option */
+.dark .ant-picker-time-panel-column>li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background: #1f7661 !important;
+  /* teal-600 for selected option */
   color: #ffffff !important;
 }
 
-.dark .ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner:hover {
-  background: #4b5563 !important; /* gray-600 for hover */
+.dark .ant-picker-time-panel-column>li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner:hover {
+  background: #4b5563 !important;
+  /* gray-600 for hover */
 }
+
 .dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-content th {
-  color: rgba(255, 255, 255, 0.88); /* White with 88% opacity for dark mode */
+  color: rgba(255, 255, 255, 0.88);
+  /* White with 88% opacity for dark mode */
 }
 
 .dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-content tr {
-  color: rgba(255, 255, 255, 0.88); /* White with 88% opacity for dark mode */
+  color: rgba(255, 255, 255, 0.88);
+  /* White with 88% opacity for dark mode */
 }
-.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view{
-  color: rgba(255, 255, 255, 0.88) !important; /* White with 88% opacity for dark mode */
+
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell-in-view {
+  color: rgba(255, 255, 255, 0.88) !important;
+  /* White with 88% opacity for dark mode */
 }
-.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell{
+
+.dark :where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-cell {
   color: rgba(179, 175, 175, 0.823);
 }
+
 /* Custom focus and hover styles */
 .ant-picker:hover,
 .ant-picker-focused {
@@ -427,42 +469,44 @@ polyline {
 }
 
 /* Custom icon color for suffix */
-.ant-picker:hover 
-.ant-picker-suffix{
+.ant-picker:hover .ant-picker-suffix {
   color: #009966 !important;
 }
 
 /* custom multiselect */
-.css-t3ipsp-control{
+.css-t3ipsp-control {
   border-color: #009966 !important;
 }
-.css-1jqq78o-placeholder{
-  color: #c2c0c0 !important;  
+
+.css-1jqq78o-placeholder {
+  color: #c2c0c0 !important;
   font-size: 14px !important;
   font-family: "Inter", sans-serif;
 }
-.css-4rmduw-control{
+
+.css-4rmduw-control {
   border-radius: 7px !important;
-  background: #ffffff ;
+  background: #ffffff;
   border-width: 1px !important;
   border-style: solid !important;
   border-color: #d9d9d9 !important;
   padding: 0 !important;
 }
 
-.css-757vwy-control{
+.css-757vwy-control {
   padding: 2px 0;
 }
-.css-x2vswn-control{
+
+.css-x2vswn-control {
   padding: 0 !important;
 }
 
-.css-1dimb5e-singleValue{
+.css-1dimb5e-singleValue {
   color: #4e4e4e !important;
   font-size: 14px !important;
 }
 
-.css-v7duua:hover{
+.css-v7duua:hover {
   background: #01ffaa46 !important;
   cursor: pointer;
 }
@@ -472,17 +516,25 @@ input {
 }
 
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important; /* Forces background */
-  -webkit-text-fill-color: #4e4e4e !important; /* Ensures text color */
-  caret-color: #4e4e4e !important; /* Sets the cursor color */
-  transition: background-color 9999s ease-in-out 0s; /* Prevents autofill reset */
+  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important;
+  /* Forces background */
+  -webkit-text-fill-color: #4e4e4e !important;
+  /* Ensures text color */
+  caret-color: #4e4e4e !important;
+  /* Sets the cursor color */
+  transition: background-color 9999s ease-in-out 0s;
+  /* Prevents autofill reset */
 }
 
 .dark input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important; /* Forces background */
-  -webkit-text-fill-color: #fff !important; /* Ensures text color */
-  caret-color: #fff !important; /* Sets the cursor color */
-  transition: background-color 9999s ease-in-out 0s; /* Prevents autofill reset */
+  -webkit-box-shadow: 0 0 0px 1000px #00996600 inset !important;
+  /* Forces background */
+  -webkit-text-fill-color: #fff !important;
+  /* Ensures text color */
+  caret-color: #fff !important;
+  /* Sets the cursor color */
+  transition: background-color 9999s ease-in-out 0s;
+  /* Prevents autofill reset */
 }
 
 .dark input:-webkit-autofill:hover,
@@ -490,17 +542,18 @@ input:-webkit-autofill {
   -webkit-text-fill-color: #fff !important;
   caret-color: #fff !important;
 }
+
 .dark input:-webkit-autofill::first-line {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
 }
 
-.dark .ant-picker-dropdown .ant-picker-header{
-  color:#ffffff !important;
+.dark .ant-picker-dropdown .ant-picker-header {
+  color: #ffffff !important;
 }
 
-.dark .ant-picker-dropdown .ant-picker-header button{
-  color:#ffffff !important;
+.dark .ant-picker-dropdown .ant-picker-header button {
+  color: #ffffff !important;
 }
 
 
@@ -511,23 +564,26 @@ input::placeholder {
   font-weight: 400;
   font-style: normal;
 }
+
 .dark .ant-picker-input input::placeholder {
-  color: rgba(179, 179, 179, 0.774); /* Equivalent to Tailwind's gray-500 */
+  color: rgba(179, 179, 179, 0.774);
+  /* Equivalent to Tailwind's gray-500 */
 }
 
 .no-scroll {
-  overflow: hidden !important; /* Prevent scrolling */
+  overflow: hidden !important;
+  /* Prevent scrolling */
   height: 100vh;
 }
 
 .quill-container {
-  height: 200px; 
-  overflow-y: auto; 
+  height: 200px;
+  overflow-y: auto;
 }
 
 .quill {
-  height: 200px; 
-  overflow-y: auto; 
+  height: 200px;
+  overflow-y: auto;
 }
 
 .custom-ui-checkbox input[type="checkbox"]:checked:after {
@@ -543,24 +599,120 @@ input::placeholder {
 }
 
 
- .ant-modal-content {
-  background-color: #fff; /* Light mode default */
+.ant-modal-content {
+  background-color: #fff;
+  /* Light mode default */
 }
 
-.dark  .ant-modal-content {
-  background-color: #1f2937; /* gray-800 for dark mode */
+.dark .ant-modal-content {
+  background-color: #1f2937;
+  /* gray-800 for dark mode */
 }
 
-.dark  .ant-modal-header {
-  background-color: #1f2937; /* gray-800 */
-  border-bottom: 1px solid #374151; /* gray-700 */
+.dark .ant-modal-header {
+  background-color: #1f2937;
+  /* gray-800 */
+  border-bottom: 1px solid #374151;
+  /* gray-700 */
 }
 
-.dark  .ant-modal-footer {
-  background-color: #1f2937; /* gray-800 */
-  border-top: 1px solid #374151; /* gray-700 */
+.dark .ant-modal-footer {
+  background-color: #1f2937;
+  /* gray-800 */
+  border-top: 1px solid #374151;
+  /* gray-700 */
 }
 
-.dark  .ant-modal-close-x {
-  color: #d1d5db; /* gray-300 */
+.dark .ant-modal-close-x {
+  color: #d1d5db;
+  /* gray-300 */
+}
+
+/* Bell Ring */
+@keyframes bell-ring {
+
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  20% {
+    transform: rotate(12deg) scale(1.1);
+  }
+
+  60% {
+    transform: rotate(-12deg) scale(1.1);
+  }
+}
+
+.animate-bell-ring {
+  animation: bell-ring 0.8s ease-in-out infinite;
+}
+
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.726); /* Dark semi-transparent background */
+  display: block; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.preview-modal-overlay:hover .preview-modal-header {
+  transform: translateY(0) !important;
+}
+
+.preview-modal-overlay.active {
+  display: flex;
+}
+
+.preview-modal-content {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  text-align: center;
+}
+
+.preview-modal-close {
+  cursor: pointer;
+  color: #ffffff; /* Assuming $text-white is white */
+  font-size: 24px; /* Assuming $size-24 is 24px */
+}
+
+.preview-modal-download {
+  font-size: 24px; /* Assuming $size-24 is 24px */
+  cursor: pointer;
+  color: #ffffff; /* Assuming $text-white is white */
+}
+
+.preview-modal-body {
+  display: flex;
+  height: 90%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 3%;
+}
+
+.preview-modal-body img {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.preview-modal-header {
+  padding: 10px 20px; /* Assuming $size-10 is 10px, $size-20 is 20px */
+  transform: translateY(-60px); /* Assuming $size-60 is 60px */
+  transition: transform 0.3s;
+}
+
+.preview-modal-header .file-name {
+  color: #ffffff; /* Assuming $text-white is white */
 }

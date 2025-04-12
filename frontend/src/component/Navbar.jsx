@@ -13,6 +13,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [userDetails, setUserDetails] = useState({});
+  const [notificationCount, setNotificationCount] = useState(0)
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
@@ -31,7 +32,7 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
     try {
       let token = JSON.parse(localStorage.getItem('persistantState'))?.token;
       let response = await api.post('/settings/logout', { token });
-      if(!response.success){
+      if (!response.success) {
         toast.error('Error while logging out!');
         return;
       }
@@ -45,6 +46,21 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
       console.error('Login error:', errorMessage);
     }
   }
+
+  const getNotificationCount = async () => {
+    try {
+      let response = await api.get('/settings/get-notification-count');
+      if (response.success) {
+        setNotificationCount(response.count)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getNotificationCount()
+  }, [])
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('persistantState'));
@@ -62,11 +78,11 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
         setIsNotificationOpen(false);
       }
     };
-  
+
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [user]);
-  
+
   return (
     <div className="w-full bg-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:border-gray-700">
       <nav className="navbar flex justify-between items-center p-4 shadow-md rounded-lg">
@@ -76,10 +92,19 @@ const Navbar = ({ handleSideNav, isSideNavOpen }) => {
         <div className="right-nav flex items-center gap-4">
           <div className="bell cursor-pointer" ref={notificationRef}>
             <span className="relative" onClick={toggleNotification}>
-              <i className={`fu ph-fill ph-bell text-2xl text-gray-600 hover:text-teal-500 ${isNotificationOpen ? "text-teal-500" : ""} transition-colors duration-200`}></i>
+              <div className="relative inline-flex items-center justify-center">
+                <i
+                  className={`fu ph-fill ph-bell text-2xl text-gray-700 hover:text-teal-600 relative z-10 transition-colors duration-300 ease-out ${isNotificationOpen
+                    ? "text-teal-600"
+                    : ""
+                    } ${notificationCount ? "animate-bell-ring" : ""}`}
+                ></i>
+
+                {notificationCount!==0 && (<span className="absolute top-[-3px] right-[-3px] w-4 h-4 text-xs text-white bg-red-500 rounded-full text-center z-12">{notificationCount}</span>)}
+              </div>
             </span>
             {isNotificationOpen && <div className="absolute z-[9999] right-8">
-              <Notification />
+              <Notification setNotificationCount={setNotificationCount} />
             </div>}
           </div>
           <div className="user-pic relative" ref={dropdownRef}>

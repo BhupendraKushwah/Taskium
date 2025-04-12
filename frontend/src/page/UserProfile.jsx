@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import { Button, Input, CustomMultiSelectField,Datepicker } from '../component/commonComponent/customFields';
+import { Button, Input, CustomMultiSelectField, Datepicker } from '../component/commonComponent/customFields';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { NavLink, useParams } from 'react-router'; // Fixed import typo
@@ -8,12 +8,16 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { getImage } from '../component/commonComponent/common';
 import { useUser } from "../context/userContext/UserContext";
+import PreviewModal from '../component/commonComponent/common/PreviewModal';
 
 const UserProfile = () => {
   const [modalType, setModalType] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [previewModel, setPreviewModel] = useState({
+    isOpen: false,
+    file: null
+  });
   const { id } = useParams(); // Destructure for cleaner access
-  const api = useApi();
   const { user, fetchUser } = useUser();
 
   // Fetch user data when ID changes
@@ -21,7 +25,7 @@ const UserProfile = () => {
     if (id) {
       fetchUser(); // Runs asynchronously
     }
-  }, [id, fetchUser]);
+  }, [id]);
 
   // Sync local state with context user
   useEffect(() => {
@@ -32,6 +36,19 @@ const UserProfile = () => {
 
   if (!userData) {
     return <div className="min-h-screen p-4 sm:p-6">Loading...</div>;
+  }
+
+  const handlePreview = (img) => {
+    if (!img) return;
+    let mimetype = `image/${img.split('.')[1]}`;
+    const fileData = {
+      src: getImage('profile/large', img),
+      mimetype: mimetype
+    }
+    setPreviewModel({
+      isOpen: true,
+      file: fileData
+    });
   }
 
   return (
@@ -55,7 +72,7 @@ const UserProfile = () => {
           </div>
           <div className="flex flex-col gap-4 sm:flex-row items-start md:justify-between">
             <div className="flex sm:w-1/2 w-full items-center gap-4">
-              <div className="w-20 flex-shrink-0">
+              <div className="w-20 flex-shrink-0 cursor-pointer" onClick={() => handlePreview(userData?.image)}>
                 <img
                   src={getImage('profile/medium', userData?.image) || 'https://dummyimage.com/64x82/000/fff'}
                   alt="User"
@@ -66,7 +83,7 @@ const UserProfile = () => {
                 <h5 className="text-lg font-semibold text-gray-900 dark:text-white">{userData?.name || 'N/A'}</h5>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{userData?.designation || 'No Data'}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {userData?.startDate ? dayjs(userData.startDate).format('YYYY-MM-DD') : 'No Data'} - 
+                  {userData?.startDate ? dayjs(userData.startDate).format('YYYY-MM-DD') : 'No Data'} -
                   {userData?.endDate ? dayjs(userData.endDate).format('YYYY-MM-DD') : userData?.startDate ? 'Till Now' : 'No Data'}
                 </p>
                 <NavLink to="/settings" className="flex items-center gap-1 text-sm text-blue-500 hover:underline">
@@ -187,6 +204,14 @@ const UserProfile = () => {
         userData={userData}
         updateUserData={setUserData}
       />
+      <PreviewModal
+        mimetype={previewModel.file?.mimetype}
+        src={previewModel.file?.src}
+        isOpen={previewModel.isOpen}
+        onClose={() => setPreviewModel({ isOpen: false })}
+      />
+
+
     </div>
   );
 };

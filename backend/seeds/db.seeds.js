@@ -5,33 +5,28 @@ import {createProjectTable} from '../models/projectModel.js'
 import {createTaskTable} from '../models/taskModel.js'
 import logger from '../config/logger.js'
 const TableSeeds = async () => {
-    try {
-      // Array of table creation promises
-      const tableCreationPromises = [
-        createUserTable(),
-        createAttendanceTable(),
-        createNotificationTable(),
-        createProjectTable(),
-        createTaskTable(),
-        createProfessionTable(),
-        createSocialTable(),
-        createUserDeviceLoginTable()
-      ];
-  
-      // Execute all table creations concurrently
-      await Promise.all(tableCreationPromises);
-    
-      
-      return true;
-    } catch (error) {
-      logger.error({
-        message: error.message,
-        stack: error.stack,
-        filepath: '/seeds/db.seeds.js',
-        function: 'TableSeeds'
-      });
-      throw error; // Re-throw to allow handling by caller
-    }
-  };
+  try {
+    // Create in order based on foreign key dependencies
+    await createUserTable();              // must come first
+    await createProfessionTable();        // safe after users
+    await createSocialTable();            // safe after users
+    await createUserDeviceLoginTable();   // safe after users
+    await createAttendanceTable();        // references users
+    await createProjectTable();           // likely independent
+    await createTaskTable();              // might depend on projects or users
+    await createNotificationTable();      // likely independent
+
+    return true;
+  } catch (error) {
+    logger.error({
+      message: error.message,
+      stack: error.stack,
+      filepath: '/seeds/db.seeds.js',
+      function: 'TableSeeds'
+    });
+    throw error;
+  }
+};
+
 
 export default TableSeeds

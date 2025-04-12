@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import { sendPasswordResetLink } from '../services/emailService.js';
 import { getUserAttendance } from '../models/attendanceModel.js';
 import { getNotifications, markNotificationAsRead } from '../models/notificationModel.js';
+import { get } from 'http';
 dotenv.config();
 const generateForgotPasswordToken = async (req, res) => {
     try {
@@ -149,11 +150,27 @@ const markAllAsRead = async (req, res) => {
     }
 }
 
+const getNotificationsCount = async (req, res) => {
+    try {
+        let userId = req.userId;
+        let query = `SELECT COUNT(*) as count FROM notifications WHERE userId = ? AND isRead = 0`;
+        let values = [userId];
+        let [row] = await pool.query(query, values);
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success: true,
+            count: row[0].count
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getNotificationsCount' });
+        throw error;
+    }
+}
 export {
     generateForgotPasswordToken,
     resetPassword,
     getLoginDevices,
     getUserAttendances,
     getUserNotifications,
-    markAllAsRead
+    markAllAsRead,
+    getNotificationsCount
 }
