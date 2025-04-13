@@ -165,6 +165,21 @@ const getNotificationsCount = async (req, res) => {
         throw error;
     }
 }
+
+const getProjectUsers = async (req, res) => {
+    try {
+        let query = `SELECT id as value ,name as label FROM users WHERE 1=1`;
+        let [row] = await pool.query(query);
+        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+            success: true,
+            data: row,
+            message: 'Project users fetched successfully'
+        })
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getProjectUsers' });
+        throw error;
+    }
+}
 export {
     generateForgotPasswordToken,
     resetPassword,
@@ -172,5 +187,6 @@ export {
     getUserAttendances,
     getUserNotifications,
     markAllAsRead,
-    getNotificationsCount
+    getNotificationsCount,
+    getProjectUsers
 }

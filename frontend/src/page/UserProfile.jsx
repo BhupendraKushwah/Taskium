@@ -43,7 +43,8 @@ const UserProfile = () => {
     let mimetype = `image/${img.split('.')[1]}`;
     const fileData = {
       src: getImage('profile/large', img),
-      mimetype: mimetype
+      mimetype: mimetype,
+      title: img
     }
     setPreviewModel({
       isOpen: true,

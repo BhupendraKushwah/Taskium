@@ -19,6 +19,7 @@ function CustomDatepicker({ onDateChange, className = '', defaultValue = null ,.
         style={{
           borderRadius: "8px",
           padding: "0.5rem",
+          width: "100%",
         }}
         {...props}
       />

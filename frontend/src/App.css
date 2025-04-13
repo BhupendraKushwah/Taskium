@@ -418,12 +418,16 @@ polyline {
   background: #000000 !important;
   /* match dropdown background */
   color: #ffffff !important;
+  width: 100%;
 }
 
 .dark .ant-picker-panel {
   background: #000000 !important;
   border-color: #4b5563 !important;
   /* gray-600 */
+}
+:where(.css-dev-only-do-not-override-xex5fb).ant-picker-dropdown .ant-picker-panel-container .ant-picker-panel-layout{
+  justify-content: center;
 }
 
 .dark .ant-picker-time-panel-column>li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner {

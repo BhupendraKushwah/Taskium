@@ -3,29 +3,28 @@ import { CustomSearchField, Button, Input, Datepicker, CustomMultiSelectField } 
 import ProjectDetails from "../component/projects/ProjectData";
 import dayjs from "dayjs";
 import { useProject } from "../context/ProjectContext/ProjectContext";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { focusOptions, statusOptions, teamDesignation } from "../constants/common";
+import useApi from "../hooks/instance";
+import PreviewModal from "../component/commonComponent/common/PreviewModal";
+import { getImage } from "../component/commonComponent/common";
 
 const Projects = () => {
-    const { projects, addProjects } = useProject();
+    const { projects, addProjects,getProjects,hasMore } = useProject();
     const [filteredProjects, setFilteredProjects] = useState([]);
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState({});
     const [isSideFormOpen, setIsSideFormOpen] = useState(false);
-    const projectData = Array(7).fill(null).map((_, index) => ({
-        projectName: "Portfolio",
-        description: "A project to redesign the company's website with a modern look.",
-        status: "In Progress",
-        teamMembers: [
-            { name: "John Doe", role: "Designer" },
-            { name: "Jane Smith", role: "Developer" }
-        ],
-        startDate: "2025-01-01",
-        dueDate: "2025-02-01"
-    }));
+    const [previewModel, setPreviewModel] = useState({
+        isOpen: false,
+        file: null
+    });
 
     const handleAsyncChange = async (value) => {
-        setSearch(value);
+        setSearch({ projectName: value });
+        await getProjects({ projectName: value });
         setFilteredProjects(
             projects.filter(item =>
-                item.name.toLowerCase().includes(value.toLowerCase())
+                item.projectName.toLowerCase().includes(value.toLowerCase())
             )
         );
     };
@@ -35,22 +34,48 @@ const Projects = () => {
         setIsSideFormOpen(false);
     };
 
-    useEffect(() => {
-        projectData.forEach((item) => addProjects(item));
-    }, []);
+    const handlePreview = (img) => {
+        if (!img) return;
 
+        const extension = img.split('.').pop();
+        const fileData = {
+            src: getImage('project/large', img),
+            mimetype: `image/${extension}`,
+            title: img
+        }
+
+        setPreviewModel({
+            isOpen: true,
+            file: fileData
+        });
+    }
+
+    const handleScroll =async (e) => {
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (bottom && hasMore) {
+            getProjects(search);
+        }
+    }
     useEffect(() => {
-        setFilteredProjects(projects);
-    }, [projects]);
+        if (Object.keys(search).length > 0) {
+            setFilteredProjects(
+                projects.filter(item =>
+                    item.projectName.toLowerCase().includes(search.projectName.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredProjects(projects);
+        }
+    }, [projects, search]);
 
     return (
-        <div className="overflow-hidden dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800">
+        <div className="dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800">
             <div className="content-head flex flex-col sm:flex-row sm:items-center mb-3 mt-2 justify-between bg-white dark:bg-gray-800 p-2 rounded dark:border-gray-700">
                 <h3 className="text-lg text-gray-900 dark:text-white">Projects</h3>
                 <div className="content-head-right flex items-center">
                     <CustomSearchField
                         onChange={handleAsyncChange}
-                        value={search}
+                        value={search.projectName}
                         placeholder="Search here"
                         className="bg-white dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
                     />
@@ -64,11 +89,11 @@ const Projects = () => {
                 </div>
             </div>
 
-            <div className={`overflow-y-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 p-3 rounded ${filteredProjects.length <= 3 ? "h-[calc(100vh-100px)]" : "h-full"}`}>
+            <div className={`overflow-y-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 p-3 rounded h-[calc(100vh-100px)]`} onScroll={handleScroll}>
                 {filteredProjects?.length ? (
                     filteredProjects.map(project => (
-                        <div key={project._id}>
-                            <ProjectDetails project={project} />
+                        <div key={project.id}>
+                            <ProjectDetails project={project} handlePreview={handlePreview} />
                         </div>
                     ))
                 ) : (
@@ -79,47 +104,76 @@ const Projects = () => {
             </div>
 
             {isSideFormOpen && <ProjectForm onClose={() => setIsSideFormOpen(false)} onSubmit={handleSubmit} />}
+            <PreviewModal
+                mimetype={previewModel.file?.mimetype}
+                src={previewModel.file?.src}
+                isOpen={previewModel.isOpen}
+                onClose={() => setPreviewModel({ isOpen: false })}
+                title={previewModel.file?.title}
+            />
         </div>
     );
 };
 
-const ProjectForm = ({ onClose, onSubmit }) => {
-    const [formData, setFormData] = useState({
-        projectName: "",
-        description: "",
-        startDate: new Date(),
-        teamMembers: [{ name: "", role: "" }],
-        message: ""
+const ProjectForm = ({ onClose, onSubmit, project }) => {
+    const {
+        control,
+        handleSubmit,
+        register,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            projectName: project?.projectName || "",
+            image: project?.image || "",
+            focus: project?.focus || focusOptions.find(option => option.value === 'design')?.value || "",
+            status: project?.status || "",
+            startDate: project?.startDate ? dayjs(project.startDate) : dayjs(),
+            teamMembers: project?.teamMembers || [{ name: "", role: "" }],
+        },
     });
 
-    const teamDesignation = ["Designer", "Developer", "Tester"].map(role => ({ label: role, value: role }));
+    const [teamUser, setTeamUser] = useState([]);
+    const [image, setImage] = useState(null);
 
-    const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const api = useApi();
 
-    const handleDateChange = (date) => setFormData(prev => ({ ...prev, startDate: date }));
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "teamMembers",
+    });
 
-    const handleTeamChange = (index, field, value) => {
-        const updatedTeam = [...formData.teamMembers];
-        updatedTeam[index][field] = value;
-        setFormData(prev => ({ ...prev, teamMembers: updatedTeam }));
+    const getUsers = async () => {
+        try {
+            const response = await api.get('/settings/get-users');
+            setTeamUser(response.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    const submitForm = (data) => {
+        if (image instanceof File) {
+            data['image'] = image;
+        } else if (project?.image) {
+            data['projectImage'] = project.image;
+        }
+        onSubmit({
+            ...data,
+            teamMembers: data.teamMembers.map((member, index) => ({
+                name: member.name,
+                teamName: teamUser.find(user => user.value === member.name).label,
+                role: member.role
+            })),
+            startDate: data.startDate.toISOString(), // Convert to ISO string for consistency
+            dueDate: data.dueDate.toISOString(), // Convert to ISO string for consistency
+        });
+        // onClose();
     };
 
-    const addTeamMember = (e) => {
-        e.preventDefault();
-        setFormData((prev) => ({
-            ...prev,
-            teamMembers: [...prev.teamMembers, { name: "", role: "" }],
-        }));
-    };
-
-    const removeTeamMember = (index) => {
-        setFormData(prev => ({ ...prev, teamMembers: prev.teamMembers.filter((_, i) => i !== index) }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
+    useEffect(() => {
+        getUsers();
+    }, []);
 
     return (
         <div className="w-full h-full fixed top-18 left-0 bg-[#0000004d] dark:bg-[#00000080] flex justify-end z-50">
@@ -127,102 +181,218 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-2 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="cursor-pointer text-gray-600 dark:text-gray-700 hover:text-black dark:hover:text-white"
+                        aria-label="Close"
+                        className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
                     >
                         <i className="ph ph-arrow-line-right text-xl"></i>
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit(submitForm)} className="flex flex-col gap-4 mt-4">
                     {/* Project Name */}
                     <div>
-                        <label className="text-gray-400 dark:text-gray-500 text-sm">Project Name</label>
-                        <Input
-                            type="text"
+                        <label htmlFor="projectName" className="block text-sm text-gray-400 dark:text-gray-500">
+                            Project Name
+                        </label>
+                        <Controller
                             name="projectName"
-                            value={formData.projectName}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
-                            placeholder="Enter project name"
+                            control={control}
+                            rules={{ required: "Project name is required" }}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    id="projectName"
+                                    type="text"
+                                    placeholder="Enter project name"
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                />
+                            )}
                         />
+                        {errors.projectName && (
+                            <p className="text-red-500 text-xs mt-1">{errors.projectName.message}</p>
+                        )}
                     </div>
 
-                    {/* Project Description */}
+                    {/* Image */}
                     <div>
-                        <label className="text-gray-400 dark:text-gray-500 text-sm">Project Description</label>
-                        <Input
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
-                            placeholder="Describe the project..."
+                        <label
+                            htmlFor="image"
+                            className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >
+                            Upload Image
+                        </label>
+
+                        <input
+                            id="image"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                                setImage(e.target.files[0]);
+                            }}
+                            className="block cursor-pointer w-full text-sm text-gray-900 dark:text-gray-200 file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0 file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100
+                                dark:file:bg-gray-600 dark:file:text-gray-100 dark:hover:file:bg-gray-500"
                         />
+
+                        {errors.image && (
+                            <p className="mt-1 text-xs text-red-500">{errors.image.message}</p>
+                        )}
                     </div>
 
-                    {/* Start Date */}
+                    {/* Focus */}
                     <div>
-                        <label className="text-gray-400 dark:text-gray-500 text-sm">Start Date</label>
-                        <Datepicker
-                            defaultValue={dayjs(formData.startDate)}
-                            onChange={handleDateChange}
-                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                        <label htmlFor="focus" className="block text-sm text-gray-400 dark:text-gray-500">
+                            Focus
+                        </label>
+                        <Controller
+                            name="focus"
+                            control={control}
+                            rules={{ required: "Focus is required" }}
+                            render={({ field }) => (
+                                <CustomMultiSelectField
+                                    {...field}
+                                    id="focus"
+                                    options={focusOptions}
+                                    placeholder="Select focus"
+                                    onChange={(selected) => field.onChange(selected?.value)}
+                                    value={focusOptions.find(opt => opt.value === field.value) || null}
+                                    className="w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 text-sm"
+                                />
+                            )}
                         />
+                        {errors.focus && (
+                            <p className="text-red-500 text-xs mt-1">{errors.focus.message}</p>
+                        )}
                     </div>
 
+                    {/* Status */}
+                    <div>
+                        <label htmlFor="status" className="block text-sm text-gray-400 dark:text-gray-500">
+                            Status
+                        </label>
+                        <Controller
+                            name="status"
+                            control={control}
+                            rules={{ required: "Status is required" }}
+                            render={({ field }) => (
+                                <CustomMultiSelectField
+                                    {...field}
+                                    id="status"
+                                    options={statusOptions}
+                                    placeholder="Select status"
+                                    onChange={(selected) => field.onChange(selected?.value)}
+                                    value={statusOptions.find(opt => opt.value === field.value) || null}
+                                    className="w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 text-sm"
+                                />
+                            )}
+                        />
+                        {errors.status && (
+                            <p className="text-red-500 text-xs mt-1">{errors.status.message}</p>
+                        )}
+                    </div>
                     {/* Team Members */}
                     <div>
-                        <div className="flex justify-between items-end mb-2">
-                            <label className="text-gray-400 dark:text-gray-500 text-sm">Team Members</label>
-                            <Button
-                                type="button"
-                                onClick={addTeamMember}
-                                bgColor="bg-white dark:bg-gray-700"
-                                textColor="text-teal-600 dark:text-teal-300"
-                                className="mt-2 border-1 border-teal-600 dark:border-teal-300 rounded px-1 cursor-pointer hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white dark:hover:text-white transition duration-300"
-                            >
-                                <i className="ph ph-plus text-sm"></i>
-                            </Button>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="text-sm text-gray-400 dark:text-gray-500">Team Members</label>
+                            <i className="ph ph-plus text-sm text-primary border border-teal-600 dark:border-teal-300 rounded p-2 cursor-pointer hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white" onClick={() => append({ name: "", role: "" })}></i>
                         </div>
-                        {formData.teamMembers.map((member, index) => (
-                            <div key={index} className="flex gap-2 mb-2">
-                                <CustomMultiSelectField
-                                    options={teamDesignation}
-                                    placeholder="Role"
-                                    onChange={(e) => handleTeamChange(index, "role", e.value)}
-                                    className="w-1/2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
+                        {fields.map((member, index) => (
+                            <div key={member.id} className="flex gap-2 mb-2">
+                                <Controller
+                                    name={`teamMembers[${index}].role`}
+                                    control={control}
+                                    rules={{ required: "Role is required" }}
+                                    render={({ field }) => (
+                                        <CustomMultiSelectField
+                                            {...field}
+                                            options={teamDesignation}
+                                            placeholder="Role"
+                                            onChange={(selected) => field.onChange(selected?.value)}
+                                            value={teamDesignation.find(opt => opt.value === field.value) || null}
+                                            className="w-1/2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 text-sm"
+                                        />
+                                    )}
                                 />
-                                <Input
-                                    type="text"
-                                    placeholder="Name"
-                                    value={member.name}
-                                    onChange={(e) => handleTeamChange(index, "name", e.target.value)}
-                                    className="w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
+                                <Controller
+                                    name={`teamMembers[${index}].name`}
+                                    control={control}
+                                    rules={{ required: "Name is required" }}
+                                    render={({ field }) => (
+                                        <CustomMultiSelectField
+                                            {...field}
+                                            options={teamUser}
+                                            placeholder="Name"
+                                            onChange={(selected) => field.onChange(selected?.value)}
+                                            value={teamUser.find(opt => opt.value === field.value) || null}
+                                            className="w-1/2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 text-sm"
+                                        />
+                                    )}
                                 />
-                                {formData.teamMembers.length > 1 && (
+                                {fields.length > 1 && (
                                     <Button
                                         type="button"
-                                        onClick={() => removeTeamMember(index)}
+                                        onClick={() => remove(index)}
                                         bgColor="bg-white dark:bg-gray-700"
                                         textColor="text-red-500 dark:text-red-400"
-                                        className="p-1 rounded border-1 border-red-500 dark:border-red-400 cursor-pointer hover:bg-red-500 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition duration-300"
+                                        className="p-2 border border-red-500 dark:border-red-400 rounded hover:bg-red-500 dark:hover:bg-red-600 hover:text-white"
                                     >
                                         <i className="ph ph-trash text-sm"></i>
                                     </Button>
                                 )}
                             </div>
                         ))}
+                        {errors.teamMembers && (
+                            <p className="text-red-500 text-xs mt-1">Please fill out all team member fields</p>
+                        )}
                     </div>
 
-                    {/* Message */}
+                    {/* Start Date */}
                     <div>
-                        <label className="text-gray-400 dark:text-gray-500 text-sm">Message</label>
-                        <Input
-                            name="message"
-                            value={formData.message}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-200 dark:placeholder-gray-500"
-                            placeholder="Write a message..."
+                        <label htmlFor="startDate" className="block text-sm text-gray-400 dark:text-gray-500">
+                            Start Date
+                        </label>
+                        <Controller
+                            name="startDate"
+                            control={control}
+                            rules={{ required: "Start date is required" }}
+                            render={({ field }) => (
+                                <Datepicker
+                                    {...field}
+                                    id="startDate"
+                                    value={field.value}
+                                    onChange={(date) => field.onChange(date)}
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                />
+                            )}
                         />
+                        {errors.startDate && (
+                            <p className="text-red-500 text-xs mt-1">{errors.startDate.message}</p>
+                        )}
+                    </div>
+
+                    {/* Due Date */}
+                    <div>
+                        <label htmlFor="startDate" className="block text-sm text-gray-400 dark:text-gray-500">
+                            Due Date
+                        </label>
+                        <Controller
+                            name="dueDate"
+                            control={control}
+                            rules={{ required: "Due date is required" }}
+                            render={({ field }) => (
+                                <Datepicker
+                                    {...field}
+                                    id="dueDate"
+                                    value={field.value}
+                                    onChange={(date) => field.onChange(date)}
+                                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                />
+                            )}
+                        />
+                        {errors.dueDate && (
+                            <p className="text-red-500 text-xs mt-1">{errors.dueDate.message}</p>
+                        )}
                     </div>
 
                     {/* Buttons */}
@@ -232,18 +402,18 @@ const ProjectForm = ({ onClose, onSubmit }) => {
                             onClick={onClose}
                             bgColor="bg-white dark:bg-gray-700"
                             textColor="text-teal-600 dark:text-teal-300"
-                            className="px-3 py-1 border border-teal-600 dark:border-teal-300 rounded hover:shadow-md hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white dark:hover:text-white transition duration-300"
+                            className="px-4 py-2 border border-teal-600 dark:border-teal-300 rounded hover:bg-teal-600 dark:hover:bg-teal-700 hover:text-white"
                         >
                             Cancel
                         </Button>
-
                         <Button
                             type="submit"
+                            disabled={isSubmitting}
                             bgColor="bg-teal-600"
                             textColor="text-white"
-                            className="px-5 py-1 rounded hover:bg-teal-700 dark:hover:bg-teal-800 transition duration-300"
+                            className="px-4 py-2 rounded hover:bg-teal-700 disabled:opacity-50"
                         >
-                            Add
+                            {isSubmitting ? "Submitting..." : "Add"}
                         </Button>
                     </div>
                 </form>

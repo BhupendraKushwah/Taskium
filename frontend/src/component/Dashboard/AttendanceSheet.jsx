@@ -27,10 +27,6 @@ const AttendanceSheet = () => {
     getAttendance();
   }, []);
 
-  useEffect(() => {
-    console.log(attendance);
-  }, [attendance]);
-
 
   const getStreak = () => {
     let streak = 0;
