@@ -3,9 +3,11 @@ import { getAuthHeader } from '../services/Authentication.service';
 import toast from 'react-hot-toast';
 import { getDeviceId } from '../component/commonComponent/common';
 
+console.log('import.meta.env.VITE_SERVER_URL', import.meta.env.VITE_SERVER_URL);
+
 // Create axios instance with default configuration
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL || '/',
+  baseURL: import.meta.env.VITE_SERVER_URL || 'https://taskium-mu.vercel.app/',
   timeout: 600000,
   headers: {
     'Content-Type': 'application/json',
