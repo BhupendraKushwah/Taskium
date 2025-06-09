@@ -25,10 +25,8 @@ const checkUsernameExists = async (username) => {
         return false;
     }
     catch (error) {
-        console.log(error);
-        
-        // logger.Error(error, { filepath: '/services/userService.js', function: 'checkUsernameExists' });
-        // throw error;
+        logger.Error(error, { filepath: '/services/userService.js', function: 'checkUsernameExists' });
+        throw error;
     }
 }
 

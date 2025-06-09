@@ -111,7 +111,7 @@ const loginUser = async (req) => {
             ...getClientDetails(req, token),
             userId: user.id
         };
-
+console.log('deviceType value:', deviceData);
         let res = await userDeviceDao.createSession(models, deviceData);
 
         // Attendance tracking
@@ -372,7 +372,7 @@ const getClientDetails = (req, token) => {
 
 
     return {
-        deviceType: result.device.type || 'desktop',
+        deviceType: result.device.type || 'Desktop',
         osName: result.os.name || 'unknown',
         osVersion: result.os.version || 'unknown',
         browserName: result.browser.name || 'unknown',
