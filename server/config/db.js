@@ -19,6 +19,9 @@ const createDatabaseIfNotExists = async () => {
     port: DB_PORT,
     user: DB_USER,
     password: DB_PASSWORD,
+    ssl: {
+      rejectUnauthorized: true
+    }
   });
 
   await connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`);
@@ -36,6 +39,11 @@ const initSequelize = async () => {
       dialect: 'mysql',
       port: DB_PORT,
       logging: false,
+      dialectOptions: {
+        ssl: {
+          rejectUnauthorized: true
+        }
+      }
     });
 
     await sequelize.authenticate();
@@ -44,6 +52,12 @@ const initSequelize = async () => {
     return sequelize;
   } catch (error) {
     console.error('❌ Error connecting to database:', error.message);
+    console.log(DB_NAME,
+      DB_USER,
+      DB_PASSWORD,
+      DB_HOST,
+      DB_PORT);
+
     process.exit(1);
   }
 };
