@@ -34,18 +34,24 @@ const initSequelize = async () => {
   try {
     await createDatabaseIfNotExists();
 
-    sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
-      host: DB_HOST,
+   const sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST || 'gateway01.us-west-2.prod.aws.tidbcloud.com',
+      port: process.env.DB_PORT || 4000,
       dialect: 'mysql',
-      port: DB_PORT,
-      logging: false,
+      dialectModule: require('mysql2'), // Explicitly use mysql2
+      logging: (msg) => logger.Info(msg, { context: 'Sequelize' }),
       dialectOptions: {
         ssl: {
-          rejectUnauthorized: true
-        }
-      }
-    });
-
+          require: true,
+          rejectUnauthorized: false, // Required for TiDB Cloud
+        },
+      },
+    }
+  );
     await sequelize.authenticate();
     console.log('✅ Database connection established');
 
