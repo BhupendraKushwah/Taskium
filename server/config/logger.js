@@ -1,6 +1,7 @@
-const winston = require("winston");
-const os = require("os");
-const process = require("process");
+const winston = require('winston');
+const os = require('os');
+const process = require('process');
+const fs = require('fs'); // Added for directory creation
 
 const levelMap = {
     error: 50,
@@ -11,7 +12,7 @@ const levelMap = {
 };
 
 const logger = winston.createLogger({
-    level: "info",
+    level: 'info',
     format: winston.format.combine(
         winston.format.timestamp({ format: () => new Date().toISOString() }),
         winston.format.printf(({ level, timestamp, message, stack, ...meta }) => {
@@ -22,20 +23,39 @@ const logger = winston.createLogger({
                     time: timestamp,
                     pid: process.pid,
                     hostname: os.hostname(),
-                    ...meta, // Include additional metadata
-                    msg: message || "An error occurred",
-                    stack: stack || undefined, // Auto-include stack trace
+                    ...meta,
+                    msg: message || 'An error occurred',
+                    stack: stack || undefined,
                 },
                 null,
                 2
             );
         })
     ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: "logs/app.log" }),
-    ],
+    transports: [],
 });
+
+// Conditionally add transports based on environment
+if (process.env.VERCEL) {
+    // On Vercel, use Console transport only
+    logger.add(
+        new winston.transports.Console({
+            format: winston.format.simple(), // Simplify for Vercel logs
+        })
+    );
+} else {
+    // Locally, use File transport and ensure logs directory exists
+    const logDir = 'logs';
+    if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir);
+    }
+    logger.add(
+        new winston.transports.File({ filename: 'logs/app.log' })
+    );
+    logger.add(
+        new winston.transports.Console() // Optional: Keep Console for local dev
+    );
+}
 
 /**
  * Custom logger method to handle error objects properly
@@ -47,9 +67,9 @@ logger.Error = (error, metadata = {}) => {
             stack: error.stack,
         });
     } else {
-        logger.error("An error occurred", {
+        logger.error('An error occurred', {
             ...metadata,
-            error: error, // Log non-error objects as-is
+            error: error,
         });
     }
 };
