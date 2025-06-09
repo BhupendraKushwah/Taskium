@@ -1,64 +1,105 @@
-import CONSTANTS from '../config/constant.js';
-import pool from '../config/db.js';
-import logger from '../config/logger.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-import { insertUser, checkEmailExists, checkUsernameExists, getUserById, updateProfession, insertProfession, updateUser, updateSocial, insertSocial, insertDeviceLogin } from '../models/userModel.js'
-import { sendWelcomeEmail } from '../services/emailService.js';
-import { uploadImage } from '../utils/upload.js';
-import { insertUserAttendance } from '../models/attendanceModel.js';
-import { insertNotification } from '../models/notificationModel.js';
-const { UAParser } = await import('ua-parser-js');
+const CONSTANTS = require('../config/constant');
+const logger = require('../config/logger');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
+const { UAParser } = require('ua-parser-js');
+const userService = require('../services/userService');
+const emailService = require('../services/emailService');
+const { getConnection } = require('../config/db');
+const userDao = require('../dao/user.dao');
+const userDeviceDao = require('../dao/userLoginDevices.dao');
+const attendanceDao = require('../dao/attendance.dao');
+const notificationDao = require('../dao/notification.dao');
+const socialDao = require('../dao/social.dao');
+const professionDao = require('../dao/professions.dao');
+const { uploadImage } = require('../utils/upload');
 
 dotenv.config();
-const createUser = async (req, res) => {
+const createUser = async (body) => {
     try {
-        let { email, username } = req.body;
+        const { email, username, password, name, phone } = body;
 
-        let emailExists = await checkEmailExists(email);
-        let usernameExists = await checkUsernameExists(username);
+        // Check if email or username already exists
+        const [emailExists, usernameExists] = await Promise.all([
+            userService.checkEmailExists(email),
+            userService.checkUsernameExists(username)
+        ]);
 
-        if (emailExists) res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({
+        if (emailExists) {
+            return {
+                status: CONSTANTS.HTTP_STATUS.FORBIDDEN,
+                success: false,
+                error: 'Email already exists'
+            };
+        }
+
+        if (usernameExists) {
+            return {
+                status: CONSTANTS.HTTP_STATUS.FORBIDDEN,
+                success: false,
+                error: 'Username already exists'
+            };
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Get DB connection and create user
+        const Domain = await getConnection();
+        const user = await userDao.createUser(Domain.models, {
+            email,
+            username,
+            password: hashedPassword,
+            name,
+            phone
+        });
+
+        if (user) {
+            await emailService.sendWelcomeEmail(user.email, user.username);
+            return {
+                status: CONSTANTS.HTTP_STATUS.OK,
+                success: true,
+                message: 'User created successfully',
+                data: { user }
+            };
+        }
+
+        // If user is not created for some reason
+        return {
+            status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR,
             success: false,
-            error: 'Email already exist'
-        });
-        if (usernameExists) res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({
-            success: false,
-            error: 'Username already exist'
-        });
+            error: 'Failed to create user'
+        };
 
-        const result = await insertUser(req.body);
-        sendWelcomeEmail(row[0].email, row[0].username);
-        res.status(CONSTANTS.HTTP_STATUS.OK).json({
-            success: true,
-            data: {
-                insertId: result.insertId
-            },
-            message: result.message
-        });
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'createUser' });
-        res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error })
-    }
-}
+        logger.Error(error, {
+            filepath: '/controllers/authController.js',
+            function: 'createUser'
+        });
 
-const loginUser = async (req, res) => {
+        return {
+            status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR,
+            success: false,
+            error: 'Something went wrong'
+        };
+    }
+};
+
+const loginUser = async (req) => {
     try {
         const { username, password, rememberMe } = req.body;
 
-        // Fetch user
-        const [users] = await pool.query(`SELECT * FROM users WHERE username = ?`, [username]);
-        if (!users.length) {
-            return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' });
+        let { models } = await getConnection();
+        const user = await userDao.getUserByCondition(models, { username });
+        if (!user) {
+            return { status: CONSTANTS.HTTP_STATUS.UNAUTHORIZED, error: 'Invalid credentials' };
         }
-
-        const user = users[0];
 
         // Validate password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid credentials' });
+            return { status: CONSTANTS.HTTP_STATUS.UNAUTHORIZED, error: 'Invalid credentials' };
         }
 
         // Generate token
@@ -71,127 +112,154 @@ const loginUser = async (req, res) => {
             userId: user.id
         };
 
-        await insertDeviceLogin(deviceData);
+        let res = await userDeviceDao.createSession(models, deviceData);
 
         // Attendance tracking
         const today = new Date().toLocaleDateString('en-CA').split('T')[0];
-        const [attendance] = await pool.query(
-            `SELECT id FROM userAttendance WHERE userId = ? AND date = ?`,
-            [user.id, today]
-        );
 
-        if (!attendance.length) {
-            await insertUserAttendance({ userId: user.id, date: today });
+        const { count } = await attendanceDao.getUserAttendance(models, { userId: user.id, date: today });
+        if (!count) {
+            await attendanceDao.insertUserAttendance(models, { userId: user.id, date: today });
         }
 
         // Notification
-        await insertNotification({
+        await notificationDao.insertNotification(models, {
             userId: user.id,
             message: "We've detected a login to your account."
         });
 
         // Respond
-        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
             data: { token, user },
             message: 'Login successful'
-        });
+        };
 
     } catch (error) {
         logger.Error(error, {
-            filepath: '/controllers/settingController.js',
+            filepath: '/controllers/authController.js',
             function: 'loginUser'
         });
 
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Something went wrong' });
+        return {
+            status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR,
+            success: false,
+            error: 'Something went wrong'
+        };
     }
 };
 
-const getUserbyId = async (req, res) => {
+const getUserbyId = async (req) => {
     try {
-        let [user] = await getUserById(req.params.id);
-        if (!user) return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ success: false, error: 'User does not exist' })
-        return res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        const { models } = await getConnection();
+        const user = await userDao.getUserById(models, req.params.id);
+        if (!user) return { status: CONSTANTS.HTTP_STATUS.UNAUTHORIZED, success: false, error: 'User does not exist' }
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
-            data: {
-                user
-            },
-            message: 'User fetched successfully'
-        })
+            data: { user }
+        }
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getUserbyId' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
+        logger.Error(error, { filepath: '/controllers/authController.js', function: 'getUserbyId' });
+        throw error;
     }
 }
 
-const updateProfessionDetails = async (req, res) => {
+const updateProfessionDetails = async (req) => {
     try {
-        let result;
-        let query = `SELECT * FROM professions where userId = ?`;
-        let values = [req.userId];
-        let [row] = await pool.query(query, values);
-        if (!row.length) {
-            result = await insertProfession(req.body);
-            if (!result.affectedRows) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-            return res.status(CONSTANTS.HTTP_STATUS.OK).json({
-                success: true,
-                data: {
-                    result
-                },
-                message: 'Profession added successfully'
-            })
-        }
-        else {
-            req.body.id = row[0].id;
-            result = await updateProfession(req.body);
-            if (result.affectedRows === 0) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-            return res.status(CONSTANTS.HTTP_STATUS.OK).json({
-                success: true,
-                data: {
-                    result
-                },
-                message: 'Profession updated successfully'
-            })
-        }
-    } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'updateProfession' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
-    }
-}
+        const { models } = await getConnection();
+        const existingProfession = await professionDao.getProfession(models, { userId: req.userId });
 
-const getUserBytoken = async (req, res) => {
+        let result;
+        let message;
+
+        if (existingProfession) {
+            const updateResult = await professionDao.updateProfession(models, { id: existingProfession.id }, req.body);
+            if (!updateResult[0]) {
+                return { status: CONSTANTS.HTTP_STATUS.FORBIDDEN, error: 'An error occurred while updating profession' };
+            }
+            result = updateResult;
+            message = 'Profession updated successfully';
+        } else {
+            result = await professionDao.createProfession(models, req.body);
+            if (!result) {
+                return { status: CONSTANTS.HTTP_STATUS.FORBIDDEN, error: 'An error occurred while adding profession' };
+            }
+            message = 'Profession added successfully';
+        }
+
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
+            success: true,
+            data: { result },
+            message
+        };
+    } catch (error) {
+        logger.Error(error, { filepath: '/controllers/authController.js', function: 'updateProfessionDetails' });
+        return {
+            status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR,
+            success: false,
+            error
+        };
+    }
+};
+
+
+const getUserBytoken = async (req) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({
+            return {
                 success: false,
                 message: 'No token provided or invalid format',
-            });
+            };
         }
         let decodeToken = jwt.decode(authHeader, process.env.JWT_TOKEN);
         let userId = decodeToken.userId;
-        let [user] = await getUserById(userId);
+        const { models } = await getConnection();
+        let user = await userDao.getUserById(models, userId);
 
-        if (!user) return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ success: false, error: 'User does not exist' })
-        return res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        if (!user) return { status: CONSTANTS.HTTP_STATUS.UNAUTHORIZED, success: false, error: 'User does not exist' }
+
+        let userProfession = await professionDao.getProfession(models, { userId })
+        if (userProfession) {
+            userProfession.dataValues.registeredEmail = userProfession.dataValues.email;
+            delete userProfession.dataValues.email; // ✅ Correct way to remove a key from an object
+        }
+
+        let userSocialLink = await socialDao.getSocial(models, { userId });
+
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
             data: {
-                user
+                user: {
+                    ...user?.dataValues,
+                    ...userProfession?.dataValues,
+                    ...userSocialLink?.dataValues
+                }
             },
             message: 'User fetched successfully'
-        })
+        }
 
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'getUserBytoken' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
+        logger.Error(error, { filepath: '/controllers/authController.js', function: 'getUserBytoken' });
+        return { status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR, success: false, error }
     }
 }
 
-const updatePersonalInformation = async (req, res) => {
+const updatePersonalInformation = async (req) => {
     try {
+        const { id } = req.body;
+        const { models } = await getConnection();
+
+        // Handle image upload if file is present
         if (req.file) {
-            const fileName = `user_${req.body.id}_profile-${Date.now()}`;
-            const buffer = req.file.buffer
+            const fileName = `user_${id}_profile-${Date.now()}`;
+            const buffer = req.file.buffer;
+
+            // Upload to Cloudinary in 3 sizes
             const [original, small, medium] = await Promise.all([
                 uploadImage(buffer, {
                     public_id: fileName,
@@ -211,55 +279,81 @@ const updatePersonalInformation = async (req, res) => {
                     transformation: [{ width: 80, height: 102, crop: 'fill' }],
                 }),
             ]);
+
+            // Get extension and construct filename
             const extension = req.file.mimetype.split('/')[1];
             req.body.image = `${fileName}.${extension}`;
+        } else {
+            // If no new file, retain existing image from client
+            req.body.image = req.body.profileImage;
         }
-        else req.body.image = req.body.profileImage
-        let result = await updateUser(req.body);
-        if (result.affectedRows === 0) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-        return res.status(CONSTANTS.HTTP_STATUS.OK).json({
+
+        // Update user record
+        const result = await userDao.updateUser(models, { id: req.userId }, req.body);
+
+        // Sequelize returns [affectedCount]; check if any row was updated
+        if (!result[0]) {
+            return {
+                status: CONSTANTS.HTTP_STATUS.NOT_FOUND,
+                success: false,
+                error: 'User not found or no changes applied'
+            };
+        }
+
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
             data: {
-                result,
                 image: req.body.image
             },
-            message: 'Profession updated successfully'
-        })
+            message: 'Personal information updated successfully'
+        };
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'updatePersonalInformation' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
-    }
-}
+        logger.Error(error, {
+            filepath: '/controllers/authController.js',
+            function: 'updatePersonalInformation'
+        });
 
-const updateSocialLinks = async (req, res) => {
+        return {
+            status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR,
+            success: false,
+            error
+        };
+    }
+};
+
+
+const updateSocialLinks = async (req) => {
     try {
-        let query = `SELECT * FROM social where userId = ?`;
-        let values = [req.userId];
-        let [row] = await pool.query(query, values);
-        if (!row.length) {
-            let result = await insertSocial(req.body);
-            if (!result.affectedRows) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-            return res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        const { models } = await getConnection();
+        const userId = req.userId;
+        let row = await socialDao.getSocial(models, userId);
+
+        if (!row) {
+            let result = await socialDao.createSocial(models, req.body);
+            if (!result) return { status: CONSTANTS.HTTP_STATUS.FORBIDDEN, error: 'An error occurred' }
+            return {
+                status: CONSTANTS.HTTP_STATUS.OK,
                 success: true,
                 data: {
                     result
                 },
                 message: 'Links updated successfully'
-            })
+            }
         }
-        req.body.id = row[0].id;
-        let result = await updateSocial(req.body);
-        if (!result.affectedRows) return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
-        return res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        let result = await socialDao.updateSocial(models, { id: row.id }, req.body);
+        if (!result[0]) return { status: CONSTANTS.HTTP_STATUS.FORBIDDEN, error: 'An error occurred' }
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
             data: {
                 result
             },
             message: 'Links updated successfully'
-        })
+        }
     } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'updateSocialLinks' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
+        logger.Error(error, { filepath: '/controllers/authController.js', function: 'updateSocialLinks' });
+        return { status: CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR, error }
     }
 }
 
@@ -289,7 +383,7 @@ const getClientDetails = (req, token) => {
     };
 };
 
-export {
+module.exports = {
     createUser,
     loginUser,
     getUserbyId,

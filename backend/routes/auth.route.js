@@ -1,66 +1,80 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
-import { createUser, loginUser, getUserbyId, updateProfessionDetails, getUserBytoken, updatePersonalInformation, updateSocialLinks } from '../controllers/authController.js'
-import CONSTANTS from "../config/constant.js";
-import { verifyToken } from '../middleware/authMiddleware.js'
-import upload from '../middleware/multer.js'
-import logger from '../config/logger.js';
+const CONSTANTS = require('../config/constant.js');
+const authController = require('../controllers/authController')
+const verifyToken = require('../middleware/authMiddleware')
+const upload =require('../middleware/multer')
 
 router.get('/', verifyToken, (req, res) => {
-    try {
-        getUserBytoken(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
-    }
+    authController.getUserBytoken(req).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
-router.post('/signup', async (req, res) => {
-    try {
-        await createUser(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
-    }
+router.post('/signup', (req, res) => {
+    authController.createUser(req.body).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
+
 })
 
-router.post('/login', async (req, res) => {
-    try {
-        await loginUser(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
-    }
+router.post('/login', (req, res) => {
+    authController.loginUser(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 router.get('/profile/:id', verifyToken, async (req, res) => {
-    try {
-        await getUserbyId(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
-    }
+    authController.getUserbyId(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 router.put('/profile/updateProfession/:id', verifyToken, async (req, res) => {
-    try {
-        await updateProfessionDetails(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
-    }
+    authController.updateProfessionDetails(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 router.put('/profile/:id', verifyToken, upload, async (req, res) => {
-    try {
-        await updatePersonalInformation(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
-    }
+    authController.updatePersonalInformation(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 router.put('/profile/socialLinks/:id', verifyToken, async (req, res) => {
-    try {
-        await updateSocialLinks(req, res)
-    } catch (error) {
-        logger.Error(error, { filepath: '/controllers/settingController.js', function: 'updateSocialLinks' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error })
-    }
+    authController.updateSocialLinks(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
+})
+
+router.get('/profile/profession/:id', verifyToken, async (req, res) => {
+    authController.getProfession(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
+})
+router.get('/profile/socialLinks/:id', verifyToken, async (req, res) => {
+    authController.getSocialLinks(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 
-export default router;
+module.exports = router;

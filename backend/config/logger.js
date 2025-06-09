@@ -1,6 +1,6 @@
-import winston from "winston";
-import os from "os";
-import process from "process";
+const winston = require("winston");
+const os = require("os");
+const process = require("process");
 
 const levelMap = {
     error: 50,
@@ -55,9 +55,9 @@ logger.Error = (error, metadata = {}) => {
 };
 
 logger.Info = (message, metadata = {}) => {
-  logger.info(message, {
-      ...metadata,
-  });
+    logger.info(message, {
+        ...metadata,
+    });
 };
 
-export default logger;
+module.exports = logger;

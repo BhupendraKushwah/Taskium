@@ -1,66 +1,83 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-
+const mysql = require('mysql2/promise');
+const { Sequelize } = require('sequelize');
+const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
 dotenv.config();
 
-async function initializeDatabase() {
-    try {
-        const connection = await mysql.createConnection({
-            host: process.env.HOST,
-            user: process.env.DB_USER,
-            password: process.env.PASSWORD,
-            port: process.env.DB_PORT || 3306,
-            // ssl: {
-            //     minVersion: 'TLSv1.2',
-            //     rejectUnauthorized: true
-            // }
-        });
+const {
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_HOST = 'localhost',
+  DB_PORT = 3306,
+} = process.env;
+let sequelizeInstances = {};
+const createDatabaseIfNotExists = async () => {
+  const connection = await mysql.createConnection({
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    password: DB_PASSWORD,
+  });
 
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\``);
-        console.log(`Database '${process.env.DB_NAME}' is ready`);
+  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`);
+  await connection.end();
+};
 
-        await connection.end();
-    } catch (error) {
-        console.error('Database Initialization Failed:', error);
-        process.exit(1);
-    }
-}
+let sequelize;
 
-console.log(process.env.DB_PORT)
-async function createPool() {
-    await initializeDatabase();
-    const pool = mysql.createPool({
-        host: process.env.HOST,
-        user: process.env.DB_USER,
-        password: process.env.PASSWORD,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT || 3306, // TiDB default
-        // ssl: {
-        //   minVersion: 'TLSv1.2',
-        //   rejectUnauthorized: true
-        // },
-        dateStrings: true
+const initSequelize = async () => {
+  try {
+    await createDatabaseIfNotExists();
+
+    sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+      host: DB_HOST,
+      dialect: 'mysql',
+      port: DB_PORT,
+      logging: false,
     });
 
-    try {
-        const connection = await pool.getConnection();
-        console.log('MySQL Connected Successfully');
-        connection.release();
-    } catch (error) {
-        console.error('MySQL Connection Failed:', error);
-        process.exit(1);
+    await sequelize.authenticate();
+    console.log('✅ Database connection established');
+
+    return sequelize;
+  } catch (error) {
+    console.error('❌ Error connecting to database:', error.message);
+    process.exit(1);
+  }
+};
+async function getConnection() {
+  const databaseName = DB_NAME;
+  if (!sequelizeInstances[databaseName]) {
+    const sequelize = await initSequelize(); // Get Sequelize instance
+
+    const models = {};
+    const modelsPath = path.resolve(__dirname, '../models');
+    const modelFiles = fs.readdirSync(modelsPath).filter(file => file.endsWith('.js'));
+
+    // Load each model and run the model factory
+    for (const file of modelFiles) {
+      const modelDef = require(path.join(modelsPath, file));
+      const model = modelDef(sequelize); // run factory function
+      models[model.name] = model;
     }
 
-    return pool;
-}
+    // Run associations
+    Object.values(models)
+      .filter(model => typeof model.associate === 'function')
+      .forEach(model => model.associate(models));
 
-export const getConnectionStatus = async ()=>{
-    try {
-        const [rows] = await pool.query("SELECT 1");
-        if(rows.length) console.log("Database is connected")
-    } catch (error) {
-        console.log(error)
-    }
+    // Attach models to Sequelize
+    sequelize.models = models;
+
+    // Cache this instance
+    sequelizeInstances[databaseName] = sequelize;
+  }
+
+  return sequelizeInstances[databaseName];
 }
-const pool = await createPool();
-export default pool;
+module.exports = {
+  initSequelize,
+  getConnection
+};

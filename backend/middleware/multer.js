@@ -1,7 +1,8 @@
-import multer from 'multer';
+const multer = require('multer');
 
-// Setup storage (you can customize destination and filename)
-const storage = multer.memoryStorage(); // or diskStorage
+// Setup storage (memory storage used here)
+const storage = multer.memoryStorage();
+
 const upload = multer({ storage });
 
-export default upload.single('image'); // if you're uploading a single image
+module.exports = upload.single('image');

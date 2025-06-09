@@ -1,25 +1,30 @@
-import jsonwebtoken from "jsonwebtoken";
-import logger from "../config/logger.js";
-import CONSTANTS from "../config/constant.js";
-import { deleteSessionByToken, findSessionByToken } from '../models/userModel.js'
+const jwt = require('jsonwebtoken');
+const logger =require( "../config/logger");
+const CONSTANTS =  require("../config/constant");
+const userDeviceDao = require('../dao/userLoginDevices.dao.js');
+const { getConnection } = require('../config/db.js');
 
-export const verifyToken = async (req, res, next) => {
+
+const verifyToken = async (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) {
         logger.Error('Token not found', { filepath: '/middleware/authMiddleware.js', function: 'verifyToken', header: req.headers, body: req.body, params: req.params });
         return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Access denied' });
     }
     try {
-        let response = await findSessionByToken(token)
-        if (!response?.length) {
+        const { models } = await getConnection();
+        let response = await userDeviceDao.findSessionByToken(models,token)
+        if (!response) {
             return res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Access denied' });
         }
-        const decoded = jsonwebtoken.verify(token, process.env.JWT_TOKEN);
+        const decoded = jwt.verify(token, process.env.JWT_TOKEN);
         req.userId = decoded.userId;
         next();
     } catch (error) {
-        await deleteSessionByToken(token)
+        // await deleteSessionByToken(token)
         logger.Error(error, { filepath: '/middleware/authMiddleware.js', function: 'verifyToken' });
         res.status(CONSTANTS.HTTP_STATUS.UNAUTHORIZED).json({ error: 'Invalid token' });
     }
 }
+
+module.exports = verifyToken

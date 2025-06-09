@@ -1,26 +1,42 @@
-import CONSTANTS from "../config/constant.js";
-import logger from "../config/logger.js"
-import { createProject, deleteProject, getProjects } from "../models/projectModel.js";
-import { uploadImage } from "../utils/upload.js";
+const { Op } = require('sequelize');
+const CONSTANTS = require('../config/constant');
+const { getConnection } = require('../config/db');
+const logger = require('../config/logger');
+const projectDao = require('../dao/project.dao');
+const teamDao = require('../dao/team.dao');
+const { uploadImage } = require('../utils/upload');
 
 
-const getProjectsData = async (req, res) => {
+const getProjectsData = async (req) => {
     try {
-        const {filters,order_by = 'p.createdAt', order_direction = 'DESC', offset} = req.query;
-        
-        let response = await getProjects(filters,order_by,order_direction,Number(offset));
-        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        let { models } = await getConnection();
+        const { projectName, order_by = 'createdAt', order_direction = 'DESC', offset, limit } = req.query;
+        let filters = {}
+        if (projectName) {
+            filters.projectName = {
+                [Op.like]: `%${projectName}%`
+            };
+        }
+        const response = await projectDao.getProjects(models, filters, {
+            order: [[order_by, order_direction]],
+            offset: parseInt(offset, 10),
+            limit: parseInt(limit, 10)
+        });
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
-            data: response.data,
-            message: 'Projects fetched successfully'
-        })
+            message: 'Projects fetched successfully',
+            data: response.rows
+        }
     } catch (error) {
         logger.Error(error, { filepath: '/controllers/projectController.js', function: 'getProjects' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+        throw error
+
     }
 }
-const addProject = async (req, res) => {
+const addProject = async (req) => {
     try {
+        const { models } = await getConnection();
         if (req.file) {
             let fileName = `project_${req.body.projectName}-${Date.now()}`;
             const buffer = req.file.buffer
@@ -47,41 +63,59 @@ const addProject = async (req, res) => {
             req.body.image = `${fileName}.${extension}`;
         }
         else req.body.image = req.body.projectImage
-        
-        let response = await createProject(req.body);
-        if(!response.success){
-            return res.status(CONSTANTS.HTTP_STATUS.FORBIDDEN).json({ error: 'An error occurred' })
+        let response = await projectDao.createProject(models, req.body);
+        if (!response) {
+            return {
+                status: CONSTANTS.HTTP_STATUS.FORBIDDEN,
+                error: 'An error occurred while adding project'
+            }
         }
-        res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        await Promise.all(req.body.teamMembers.map(async (member) => {
+            const projectTeam = {
+                projectId: response.id,
+                userId: member.name,
+                name: member.teamName,
+                role: member.role
+            };
+            await teamDao.createTeam(models, projectTeam);
+        }));
+
+        return {
+            status: CONSTANTS.HTTP_STATUS.OK,
             success: true,
             data: response,
             message: 'Project added successfully'
-        })
+        }
     } catch (error) {
         logger.Error(error, { filepath: '/controllers/projectController.js', function: 'addProject' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+        console.log(error)
+        throw error
     }
 }
 
 const deleteProjectById = async (req, res) => {
     try {
-        let response = await deleteProject(req.params.id);
-        if (response.success) {
-            res.status(CONSTANTS.HTTP_STATUS.OK).json({
+        let { models } = await getConnection();
+        let response = await projectDao.deleteProject(models, { id: req.params.id });
+
+        if (response) {
+            return {
+                status: CONSTANTS.HTTP_STATUS.OK,
                 success: true,
                 data: response,
                 message: 'Project deleted successfully'
-            })
+            }
         } else {
-            res.status(CONSTANTS.HTTP_STATUS.NOT_FOUND).json({
+            return {
+                status: CONSTANTS.HTTP_STATUS.NOT_FOUND,
                 success: false,
                 data: response,
                 message: 'Project not found'
-            })
+            }
         }
     } catch (error) {
         logger.Error(error, { filepath: '/controllers/projectController.js', function: 'deleteProjectById' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+        throw error
     }
 }
 
@@ -90,7 +124,7 @@ const updateProject = async (req, res) => {
 
     } catch (error) {
         logger.Error(error, { filepath: '/controllers/projectController.js', function: 'updateProject' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+        throw error
     }
 }
 
@@ -99,11 +133,11 @@ const searchProject = async (req, res) => {
 
     } catch (error) {
         logger.Error(error, { filepath: '/controllers/projectController.js', function: 'searchProject' });
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+        throw error
     }
 }
 
-export {
+module.exports = {
     addProject,
     getProjectsData,
     deleteProjectById,

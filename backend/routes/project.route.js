@@ -1,32 +1,32 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
-import { addProject, deleteProjectById, getProjectsData } from '../controllers/projectController.js'
-import CONSTANTS from "../config/constant.js";
-import { verifyToken } from '../middleware/authMiddleware.js';
-import upload from '../middleware/multer.js'
+const verifyToken = require('../middleware/authMiddleware')
+const projectController = require('../controllers/projectController');
+const CONSTANTS = require('../config/constant');
+const upload =require('../middleware/multer')
 
 router.get('/get-projects', verifyToken, async (req, res) => {
-    try {
-        await getProjectsData(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
-    }
+    projectController.getProjectsData(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 
 router.post('/add-project', verifyToken, upload, async (req, res) => {
-    try {
-        await addProject(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
-    }
+    projectController.addProject(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
 
 router.delete('/delete-project/:id', verifyToken, async (req, res) => {
-    try {
-        await deleteProjectById(req, res);
-    } catch (error) {
-        res.status(CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
-    }
+    projectController.deleteProjectById(req, res).then(result => {
+        res.status(result.status).json(result);
+    }).catch(error => {
+        res.status(error.status || CONSTANTS.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message || 'Internal server error' });
+    })
 })
-export default router;
+module.exports = router;

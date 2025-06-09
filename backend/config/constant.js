@@ -30,4 +30,4 @@ const CONSTANTS = {
 
 };
 
-export default CONSTANTS;
+module.exports = CONSTANTS;

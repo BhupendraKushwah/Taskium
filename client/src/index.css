@@ -1,0 +1,34 @@
+@import './App.css';
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-navbar: #262D38 !important;
+  --color-primary: oklch(0.6 0.118 184.704) !important;
+  --color-icon-base: #909294 !important;
+  --color-primary-20: oklch(0.855 0.138 181.071);
+  --color-primary-10: oklch(0.953 0.051 180.801);
+  --color-primary-15: oklch(0.91 0.096 180.426);
+  --color-primary-05: oklch(0.984 0.014 180.72);
+  --color-secondary: hsl(0, 5.70%, 89.60%) !important;
+  --color-primary-light: hsl(160, 75%, 50%) !important;
+  --color-active-link: #FF6B6B !important;
+  --color-button-bg: #009966 !important;
+  --color-button-hoverbg: #FF6B6B !important;
+  --color-text-highlight: hsl(160, 100%, 30%) !important;
+  --color-text-sub: hsl(223, 7%, 18%) !important;
+  --color-base-black: hsl(216, 15%, 9%) !important;
+  --color-base-white: hsl(0, 0%, 100%) !important;
+  --color-fuchsia-300: oklch(.833 .145 321.434);
+  --color-rose-400: oklch(.712 .194 13.428);
+  --color-blue-300: oklch(.809 .105 251.813);
+  --height-main-body: calc(100vh - 64px) !important;
+
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}

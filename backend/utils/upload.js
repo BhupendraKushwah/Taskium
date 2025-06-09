@@ -1,8 +1,7 @@
-import cloudinary from '../config/cloudinary.js'
-import sharp from 'sharp';
-import logger from '../config/logger.js';
+const cloudinary = require('../config/cloudinary');
+const sharp = require('sharp');
 
-export const uploadImage = async (buffer, options) => {
+const uploadImage = async (buffer, options) => {
     try {
         const compressedBuffer = await sharp(buffer)
         .resize(800) // Optional: Resize to width 800px (preserves aspect ratio)
@@ -22,10 +21,15 @@ export const uploadImage = async (buffer, options) => {
 }
 
 
-export const deleteImage = async (publicId) => {
+ const deleteImage = async (publicId) => {
     try {
         cloudinary.uploader.destroy(publicId);
     } catch (error) {
         console.log(error)
     }
+}
+
+module.exports={
+    uploadImage,
+    deleteImage
 }
