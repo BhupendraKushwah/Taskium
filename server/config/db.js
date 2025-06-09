@@ -43,7 +43,7 @@ const initSequelize = async () => {
       port: process.env.DB_PORT || 4000,
       dialect: 'mysql',
       dialectModule: require('mysql2'), // Explicitly use mysql2
-      logging: (msg) => logger.Info(msg, { context: 'Sequelize' }),
+      logging: (msg) => console.log(msg, { context: 'Sequelize' }),
       dialectOptions: {
         ssl: {
           require: true,
