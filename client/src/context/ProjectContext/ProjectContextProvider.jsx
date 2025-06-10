@@ -80,7 +80,9 @@ const ProjectContextProvider = ({ children }) => {
                 offset: Offset ?? offset
             });
             const newData = response.data || [];
-            setProject(prev => [...prev, ...newData]);
+            setProject(prev =>
+                (Offset === 0) || offset === 0 ? newData
+                : [...prev, ...newData]);
             setOffset(prev => prev + limit);
             if (newData.length < limit) {
                 setHasMore(false);

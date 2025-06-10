@@ -74,7 +74,7 @@ const Notification = ({setNotificationCount}) => {
     }, [])
 
     return (
-        <div className="w-[450px] h-[400px] overflow-hidden rounded-lg shadow-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+        <div className="sm:w-[450px] w-[270px] h-[400px] overflow-hidden rounded-lg shadow-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10 dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex items-center justify-between">

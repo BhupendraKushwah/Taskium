@@ -107,7 +107,7 @@ const Table = forwardRef(({ customColumns = [], data, onEdit, onDelete, getData,
         setIsFetching(false);
       }
     },
-    [filters, sortBy, getData, isFetching]
+    [filters, sortBy, isFetching]
   );
 
   // Fetch data on filter or sort change
