@@ -23,10 +23,10 @@ const TaskForm = ({ onUpdateStatus, task, onClose, onSubmit }) => {
     ];
 
     const priorityOption = [
-        { label: 'High', value: 'High' },
-        { label: 'Medium', value: 'Medium' },
-        { label: 'Low', value: 'Low' },
-        { label: 'Critical', value: 'Critical' }
+        { label: 'High', value: 'high' },
+        { label: 'Medium', value: 'medium' },
+        { label: 'Low', value: 'low' },
+        { label: 'Critical', value: 'critical' }
     ];
 
     const { handleSubmit, control, formState: { errors, isSubmitting } } = useForm({

@@ -43,11 +43,10 @@ const initSequelize = async () => {
       port: process.env.DB_PORT || 4000,
       dialect: 'mysql',
       dialectModule: require('mysql2'), // Explicitly use mysql2
-      logging: (msg) => console.log(msg, { context: 'Sequelize' }),
       dialectOptions: {
         ssl: {
-          require: true,
-          rejectUnauthorized: false, // Required for TiDB Cloud
+          // require: true,
+          // rejectUnauthorized: false, // Required for TiDB Cloud
         },
       },
     }
@@ -58,11 +57,6 @@ const initSequelize = async () => {
     return sequelize;
   } catch (error) {
     console.error('❌ Error connecting to database:', error.message);
-    console.log(DB_NAME,
-      DB_USER,
-      DB_PASSWORD,
-      DB_HOST,
-      DB_PORT);
 
     process.exit(1);
   }

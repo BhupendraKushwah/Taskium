@@ -159,7 +159,7 @@ const editTask = async (req) => {
             type: data.type?.value
         }
         let response = await taskDao.updateTask(models, id, taskData)
-        console.log(response)
+
         if (!response) {
             return {
                 status: CONSTANTS.HTTP_STATUS.NOT_FOUND,
